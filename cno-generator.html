@@ -127,7 +127,8 @@
 <div class="container">
   <header>
     <h1>Carbon Nano-Onion Generator</h1>
-    <p>Light mode • WebGL 3D preview • Bond-length histogram (1st/2nd/3rd NN) • Optional reference • XYZ & CIF export</p>
+    <p>Interactive web tool for creating fullerene-based carbon nano-onions using Goldberg-Coxeter construction.</p>
+
   </header>
 
   <div class="layout">
@@ -224,15 +225,12 @@
 
       <!-- WebGL 3D View -->
       <div class="panel">
-        <div class="panel-title">3D WebGL Preview (drag to rotate, scroll to zoom)</div>
+        <div class="panel-title">3D Preview (drag to rotate, scroll to zoom) - Testing</div>
         <div id="glwrap">
           <canvas id="glcanvas" width="600" height="300"></canvas>
           <div class="gl-overlay">Atoms (balls) + Bonds (lines) • Axes</div>
 
-          <!-- Crystal Toolkit viewer added beside canvas (keeps original canvas intact) -->
-          <div style="margin-top:10px;">
-            <crystal-toolkit-scene id="mpviewer" style="width:100%; height:300px; display:block; border-radius:8px; border:1px solid #eef2f7;"></crystal-toolkit-scene>
-          </div>
+         
         </div>
         <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-top:8px;">
           <label><input type="checkbox" id="showBonds" checked> Show bonds</label>
@@ -282,7 +280,7 @@
   </div>
 
   <footer>
-    Made for Mahrous • Light theme • WebGL without external libraries • Exports XYZ & CIF
+    All right reserved
   </footer>
 </div>
 
