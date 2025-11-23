@@ -1,0 +1,1416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Carbon Nano-Onion Generator</title>
+<style>
+  :root{
+    --bg:#ffffff; --card:#ffffff; --text:#1f2937; --muted:#64748b;
+    --primary:#0b72d9; --primary-dark:#0857a3;
+    --ok:#0e8f53; --warn:#d97706; --error:#b91c1c;
+    --border:#e5e7eb; --ring:rgba(11,114,217,0.12);
+    --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  }
+  *{ box-sizing:border-box; }
+  body{
+    margin:0;
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    color:var(--text);
+    background:
+      radial-gradient(1200px 600px at 10% -10%, #EEF5FF, transparent 60%),
+      radial-gradient(900px 400px at 110% -20%, #FEF7F1, transparent 60%),
+      var(--bg);
+    line-height:1.5;
+  }
+  .container{ max-width:1200px; margin: 24px auto; padding:0 20px; }
+
+  header{ text-align:center; padding:16px 0 6px; }
+  header h1{ margin:0 0 6px 0; font-size:1.8rem; }
+  header p{ margin:0; color:var(--muted); }
+
+  .layout{
+    display:grid; grid-template-columns: 1.1fr 0.9fr; gap:20px; margin-top:20px;
+  }
+
+  .card{
+    background:var(--card);
+    border:1px solid var(--border);
+    box-shadow:0 8px 30px rgba(0,0,0,0.04);
+    border-radius:14px; padding:16px;
+  }
+  h2{ margin:0 0 12px 0; font-size:1.22rem; }
+
+  .row{ display:grid; grid-template-columns: 1fr 1fr; gap:16px; }
+  .row.full{ grid-template-columns: 1fr; }
+  .input-group{ margin-bottom:14px; }
+  .label{
+    display:flex; align-items:center; gap:8px; font-weight:700; margin-bottom:6px; color:#0f172a;
+  }
+  .label .small{ margin-left:auto; font-size:0.88rem; color:var(--muted); }
+  .help{ display:block; color:var(--muted); font-size:0.92rem; margin-top:4px; }
+
+  input[type="text"], input[type="number"], select, input[type="file"]{
+    width:100%; padding:10px 12px; border:1px solid var(--border); border-radius:10px;
+    background:#f8fbff; color:var(--text); outline:none; transition:border-color .15s ease, box-shadow .15s ease;
+  }
+  input:focus, select:focus{ border-color:var(--primary); box-shadow:0 0 0 4px var(--ring); }
+
+  .hint{
+    font-family:var(--mono); background:#fbfdff; border:1px dashed var(--border);
+    border-radius:10px; padding:10px; color:#0f172a; margin-top:10px; white-space:pre-wrap;
+  }
+  .status{ margin-top:8px; padding:8px 10px; border-radius:10px; font-size:0.95rem; display:flex; gap:8px; align-items:center; }
+  .status.ok{ background:#e7f6ee; color:var(--ok); border:1px solid #bfe9d0; }
+  .status.warn{ background:#fff7ed; color:var(--warn); border:1px solid #fde7c7; }
+  .status.error{ background:#fee2e2; color:var(--error); border:1px solid #fecaca; }
+
+  .actions{ display:flex; gap:10px; margin-top:12px; flex-wrap:wrap; }
+  button{
+    padding:10px 14px; border:none; border-radius:10px; cursor:pointer; font-weight:600;
+    background:var(--primary); color:white; transition: transform .05s ease, background .2s ease;
+  }
+  button:hover{ background:var(--primary-dark); }
+  button:active{ transform: translateY(1px); }
+  .secondary{ background:#eef2ff; color:#1e40af; }
+  .secondary:hover{ background:#e0e7ff; }
+  .ghost{ background:#ffffff; color:#0b72d9; border:1px solid var(--border); }
+  .ghost:hover{ background:#f6faff; }
+
+  .kv{ font-family:var(--mono); }
+  .progress{ margin-top:10px; font-size:0.92rem; color:var(--muted); }
+
+  .panel{ border:1px solid var(--border); border-radius:12px; padding:12px; background:#fafcff; margin-bottom:10px; }
+  .panel-title{ display:flex; align-items:center; gap:8px; font-weight:700; margin-bottom:6px; color:#111827; }
+
+  /* WebGL viewport */
+  #glwrap{ position:relative; }
+  canvas#glcanvas{
+    width:100%; height:300px; display:block; border-radius:10px; background:white;
+    border:1px solid #eef2f7;
+  }
+  .gl-overlay{
+    position:absolute; right:10px; bottom:10px; background:#ffffffee; border:1px solid var(--border);
+    border-radius:8px; padding:6px 8px; font-size:0.9rem; color:#334155;
+  }
+  .legend{ display:flex; gap:10px; flex-wrap:wrap; margin-top:8px; }
+  .legend-item{ display:flex; align-items:center; gap:6px; padding:6px 8px; border-radius:8px; background:#fff; border:1px solid #e9eef7; font-size:0.9rem; color:#334155; cursor:pointer; }
+  .swatch{ width:14px; height:14px; border-radius:3px; border:1px solid #d1d5db; }
+
+  .bars{ display:grid; gap:8px; }
+  .bar{ display:flex; align-items:center; gap:12px; }
+  .bar-label{ width:120px; font-family:var(--mono); color:#0f172a; }
+  .bar-track{ flex:1; height:10px; border-radius:6px; background:#eef2ff; position:relative; }
+  .bar-fill{ position:absolute; left:0; top:0; bottom:0; border-radius:6px; background:linear-gradient(90deg,#7cacf8,#4d8cf0); }
+  .bar-val{ width:80px; text-align:right; font-family:var(--mono); color:#334155; }
+
+  /* Histogram */
+  #histControls{ display:flex; align-items:center; gap:10px; margin-bottom:8px; }
+  canvas#histCanvas{
+    width:100%; height:160px; display:block; border-radius:10px; background:white;
+    border:1px solid #eef2f7;
+  }
+  /* Inspector */
+  #nnInspector{ display:grid; grid-template-columns: repeat(3, 1fr); gap:8px; margin-top:6px; }
+  .metric{ background:#fff; border:1px solid #e9eef7; border-radius:8px; padding:8px; }
+  .metric .label{ font-size:0.84rem; color:#64748b; margin-bottom:4px; }
+  .metric .value{ font-family:var(--mono); font-weight:700; color:#0f172a; }
+
+  footer{ text-align:center; color:var(--muted); font-size:0.9rem; padding:14px 0 24px; }
+</style>
+
+<!-- Crystal Toolkit web component bundle (added) -->
+<script src="https://unpkg.com/@materialsproject/crystal-toolkit/dist/crystal-toolkit-bundle.js"></script>
+
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>Carbon Nano-Onion Generator</h1>
+    <p>Light mode • WebGL 3D preview • Bond-length histogram (1st/2nd/3rd NN) • Optional reference • XYZ & CIF export</p>
+  </header>
+
+  <div class="layout">
+    <!-- LEFT: FORM -->
+    <section class="card" aria-labelledby="cfg-title">
+      <h2 id="cfg-title">Configure Parameters</h2>
+
+      <div class="row full">
+        <div class="input-group">
+          <div class="label">Shell Orders (n values, comma-separated) <span class="small">e.g., 1,2,3</span></div>
+          <input type="text" id="shellOrders" placeholder="e.g., 1,2,3">
+          <span class="help">Each n creates a shell with <strong>60·n²</strong> atoms (1→C60, 2→C240, 3→C540). Use positive integers only; no duplicates.</span>
+          <div id="shellHint" class="hint" aria-live="polite"></div>
+          <div id="shellStatus" class="status warn" hidden><span></span></div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="input-group">
+          <div class="label">Mode</div>
+          <select id="mode">
+            <option value="gc">Goldberg–Coxeter (n,0)</option>
+            <option value="fibonacci">GC + Fibonacci Bonds</option>
+          </select>
+          <span class="help">GC builds standard icosahedral shells. Fibonacci adds a bond-distribution scheme for smoother topology.</span>
+        </div>
+        <div class="input-group">
+          <div class="label">Random Seed <span class="small">optional</span></div>
+          <input type="number" id="randomSeed" placeholder="e.g., 42">
+          <span class="help">Integer for reproducible randomness. Leave blank to let the app choose.</span>
+          <div id="seedStatus" class="status error" hidden></div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="input-group">
+          <div class="label">Vacuum Padding (Å)</div>
+          <input type="number" id="vacuumPadding" placeholder="e.g., 10" min="0" step="0.1">
+          <span class="help">Extra empty space around the structure; must be ≥ 0.</span>
+          <div id="vacStatus" class="status error" hidden></div>
+        </div>
+        <div class="input-group">
+          <div class="label">Bond Scale</div>
+          <input type="number" id="bondScale" placeholder="e.g., 1.00" min="0" step="0.01" value="1.00">
+          <span class="help">Adjust bond regularization strength (try 1.00).</span>
+          <div id="bondStatus" class="status error" hidden></div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="input-group">
+          <div class="label">Reference Shell File (.xyz-like) <span class="small">optional</span></div>
+          <input type="file" id="referenceFile" accept=".txt,.xyz">
+          <span class="help">Upload lines like <code class="kv">C x y z</code>. If provided, α can be auto-fit.</span>
+          <div id="refStatus" class="status warn" hidden></div>
+        </div>
+        <div class="input-group">
+          <div class="label">Reference Shell n_ref <span class="small">optional</span></div>
+          <input type="number" id="nRef" placeholder="e.g., 2 for C240">
+          <span class="help">Must match one of your n values when a reference is uploaded.</span>
+          <div id="nrefStatus" class="status error" hidden></div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="input-group">
+          <div class="label">Alpha (Å)</div>
+          <input type="number" id="alpha" placeholder="Default: 3.54" min="0" step="0.01">
+          <span class="help">Scaling factor for shell size. Required when no reference.</span>
+          <div id="alphaStatus" class="status error" hidden></div>
+        </div>
+        <div class="input-group">
+          <div class="label">Output Prefix</div>
+          <input type="text" id="prefix" placeholder="e.g., onion_60_240_540">
+          <span class="help">Prefix used for output file names.</span>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button id="generate">Generate</button>
+        <button class="secondary" id="reset">Reset</button>
+        <button class="ghost" id="downloadXYZ" disabled>Download XYZ</button>
+        <button class="ghost" id="downloadCIF" disabled>Download CIF</button>
+        <button class="ghost" id="exportLAMMPS" disabled>Export LAMMPS</button>
+      </div>
+
+      <div id="finalStatus" class="status error" hidden></div>
+      <div id="progress" class="progress" aria-live="polite"></div>
+    </section>
+
+    <!-- RIGHT: VISUAL PREVIEW -->
+    <section class="card preview" aria-labelledby="preview-title">
+      <h2 id="preview-title">Live Preview & Visuals</h2>
+
+      <!-- WebGL 3D View -->
+      <div class="panel">
+        <div class="panel-title">3D WebGL Preview (drag to rotate, scroll to zoom)</div>
+        <div id="glwrap">
+          <canvas id="glcanvas" width="600" height="300"></canvas>
+          <div class="gl-overlay">Atoms (balls) + Bonds (lines) • Axes</div>
+
+          <!-- Crystal Toolkit viewer added beside canvas (keeps original canvas intact) -->
+          <div style="margin-top:10px;">
+            <crystal-toolkit-scene id="mpviewer" style="width:100%; height:300px; display:block; border-radius:8px; border:1px solid #eef2f7;"></crystal-toolkit-scene>
+          </div>
+        </div>
+        <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-top:8px;">
+          <label><input type="checkbox" id="showBonds" checked> Show bonds</label>
+          <label><input type="checkbox" id="showAxes" checked> Show axes</label>
+          <label>Shell view:
+            <select id="shellFilter"></select>
+          </label>
+        </div>
+        <div id="glLegend" class="legend" aria-live="polite"></div>
+      </div>
+
+      <!-- Atom counts -->
+      <div class="panel">
+        <div class="panel-title">Atom Counts per Shell</div>
+        <div id="bars" class="bars" aria-live="polite"></div>
+        <div id="atomsSummary" class="hint" aria-live="polite">
+          Type n values (e.g., <code class="kv">1,2,3</code>) to see shell names and atom counts here…
+        </div>
+      </div>
+
+      <!-- Reference metrics -->
+      <div class="panel">
+        <div class="panel-title">Reference File Metrics (optional)</div>
+        <div id="refMetrics" class="hint">Upload a file to see its atom count and measured radius.</div>
+      </div>
+
+      <!-- Histogram + Inspector -->
+      <div class="panel">
+        <div class="panel-title">Bond-Length Histogram & NN Inspector</div>
+        <div id="histControls">
+          <label for="nnOrder">Nearest-neighbor order:</label>
+          <select id="nnOrder">
+            <option value="1">1st NN</option>
+            <option value="2">2nd NN</option>
+            <option value="3">3rd NN</option>
+          </select>
+        </div>
+        <canvas id="histCanvas" width="600" height="160" aria-label="Bond length histogram"></canvas>
+        <div id="nnInspector">
+          <div class="metric"><div class="label">Min (Å)</div><div id="nnMin" class="value">—</div></div>
+          <div class="metric"><div class="label">Mean (Å)</div><div id="nnMean" class="value">—</div></div>
+          <div class="metric"><div class="label">Max (Å)</div><div id="nnMax" class="value">—</div></div>
+        </div>
+        <div id="histHint" class="help">Generate the structure to populate the histogram and inspector.</div>
+      </div>
+    </section>
+  </div>
+
+  <footer>
+    Made for Mahrous • Light theme • WebGL without external libraries • Exports XYZ & CIF
+  </footer>
+</div>
+
+<script>
+/* ==============================
+ * Inline NN Worker (no external file)
+ * ============================== */
+const nnWorkerCode = `
+self.onmessage = (ev) => {
+  const pts = ev.data; // Float32Array
+  const N = pts.length/3;
+  if(!N){ self.postMessage({ d1:new Float32Array(), d2:new Float32Array(), d3:new Float32Array() }); return; }
+  const cellSize = 2.0;
+  const map = new Map();
+  const key = (ix,iy,iz)=> ix+'|'+iy+'|'+iz;
+
+  for(let i=0;i<N;i++){
+    const x=pts[i*3], y=pts[i*3+1], z=pts[i*3+2];
+    const ix=Math.floor(x/cellSize), iy=Math.floor(y/cellSize), iz=Math.floor(z/cellSize);
+    const k=key(ix,iy,iz); if(!map.has(k)) map.set(k, []); map.get(k).push(i);
+  }
+
+  const d1=new Float32Array(N), d2=new Float32Array(N), d3=new Float32Array(N);
+  for(let i=0;i<N;i++){ d1[i]=Infinity; d2[i]=Infinity; d3[i]=Infinity; }
+
+  for(let i=0;i<N;i++){
+    const x=pts[i*3], y=pts[i*3+1], z=pts[i*3+2];
+    const ix=Math.floor(x/cellSize), iy=Math.floor(y/cellSize), iz=Math.floor(z/cellSize);
+    let m1=Infinity, m2=Infinity, m3=Infinity;
+    for(let dx=-1;dx<=1;dx++){
+      for(let dy=-1;dy<=1;dy++){
+        for(let dz=-1;dz<=1;dz++){
+          const list=map.get(key(ix+dx,iy+dy,iz+dz)); if(!list) continue;
+          for(const j of list){
+            if(i===j) continue;
+            const qx=pts[j*3], qy=pts[j*3+1], qz=pts[j*3+2];
+            const d = Math.hypot(x-qx, y-qy, z-qz);
+            if(d<m1){ m3=m2; m2=m1; m1=d; }
+            else if(d<m2){ m3=m2; m2=d; }
+            else if(d<m3){ m3=d; }
+          }
+        }
+      }
+    }
+    d1[i]=m1; d2[i]=m2; d3[i]=m3;
+  }
+  self.postMessage({ d1, d2, d3 }, [d1.buffer, d2.buffer, d3.buffer]);
+};
+`;
+const nnWorkerURL = URL.createObjectURL(new Blob([nnWorkerCode], {type:'application/javascript'}));
+const nnWorker = new Worker(nnWorkerURL);
+
+/* ==============================
+ * DOM
+ * ============================== */
+const $ = sel => document.querySelector(sel);
+
+const shellInput   = $('#shellOrders');
+const shellHint    = $('#shellHint');
+const shellStatus  = $('#shellStatus');
+
+const modeSel      = $('#mode');
+const seedInput    = $('#randomSeed');
+const seedStatus   = $('#seedStatus');
+
+const vacInput     = $('#vacuumPadding');
+const vacStatus    = $('#vacStatus');
+
+const bondInput    = $('#bondScale');
+const bondStatus   = $('#bondStatus');
+
+const refInput     = $('#referenceFile');
+const refStatus    = $('#refStatus');
+
+const nrefInput    = $('#nRef');
+const nrefStatus   = $('#nrefStatus');
+
+const alphaInput   = $('#alpha');
+const alphaStatus  = $('#alphaStatus');
+
+const prefixInput  = $('#prefix');
+
+const atomsSummary = $('#atomsSummary');
+const bars         = $('#bars');
+
+const generateBtn  = $('#generate');
+const resetBtn     = $('#reset');
+const finalStatus  = $('#finalStatus');
+const progressEl   = $('#progress');
+
+const downloadXYZBtn = $('#downloadXYZ');
+const downloadCIFBtn = $('#downloadCIF');
+const exportLAMMPSBtn= $('#exportLAMMPS');
+
+const refMetricsEl = $('#refMetrics');
+
+const histCanvas = $('#histCanvas');
+const histCtx    = histCanvas.getContext('2d');
+const nnOrderSel = $('#nnOrder');
+const nnMinEl    = $('#nnMin');
+const nnMeanEl   = $('#nnMean');
+const nnMaxEl    = $('#nnMax');
+
+const glcanvas    = $('#glcanvas');
+const glLegend    = $('#glLegend');
+const showBonds   = $('#showBonds');
+const showAxes    = $('#showAxes');
+const shellFilter = $('#shellFilter');
+
+/* === crystal toolkit element reference (added) === */
+const mpViewerEl = document.getElementById('mpviewer');
+
+/* ==============================
+ * Helpers & Validation
+ * ============================== */
+function parseShells(str){
+  if(!str) return [];
+  return str.split(',').map(s => s.trim()).filter(Boolean).map(Number).filter(n => Number.isFinite(n));
+}
+function dedupe(arr){ return Array.from(new Set(arr)); }
+function atomsFor(n){ return 60 * n * n; }
+function labelFor(n){ return 'C' + atomsFor(n); }
+
+function seededRandom(seed){
+  let s = (typeof seed==='number' ? seed >>> 0 : Math.floor(Math.random()*1e9)) >>> 0;
+  return function(){
+    s += 0x6D2B79F5; let t = Math.imul(s ^ s >>> 15, 1 | s);
+    t ^= t + Math.imul(t ^ t >>> 7, 61 | t);
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };
+}
+
+function renderBars(shells){
+  bars.innerHTML = '';
+  if(shells.length===0) {
+    bars.innerHTML = '<div class="help">Bars will show atom counts per shell once you enter n values.</div>';
+    atomsSummary.textContent = 'Type n values (e.g., 1,2,3) to see shell names and atom counts here…';
+    return;
+  }
+  const counts = shells.map(n => atomsFor(n));
+  const maxCount = Math.max(...counts);
+  shells.forEach((n, idx)=>{
+    const count = counts[idx];
+    const pct = Math.max(0.04, count / maxCount);
+    const bar = document.createElement('div'); bar.className='bar';
+    const label = document.createElement('div'); label.className='bar-label'; label.textContent = `${labelFor(n)}`;
+    const track = document.createElement('div'); track.className='bar-track';
+    const fill = document.createElement('div'); fill.className='bar-fill'; fill.style.width = (pct*100)+'%';
+    const val = document.createElement('div'); val.className='bar-val'; val.textContent = count.toLocaleString();
+
+    track.appendChild(fill);
+    bar.appendChild(label);
+    bar.appendChild(track);
+    bar.appendChild(val);
+    bars.appendChild(bar);
+  });
+  const total = counts.reduce((a,b)=>a+b,0);
+  atomsSummary.textContent = `Total atoms across ${shells.length} shell(s): ${total.toLocaleString()}
+Mode: ${modeSel.value === 'gc' ? 'GC (n,0)' : 'GC + Fibonacci Bonds'}`;
+}
+
+function renderLegend(shells){
+  glLegend.innerHTML = '';
+  shells.forEach((n, idx)=>{
+    const hue = 210 + idx*22;
+    const sw = document.createElement('div'); sw.className='swatch'; sw.style.background = `hsl(${hue}, 70%, 52%)`;
+    const item = document.createElement('div'); item.className='legend-item';
+    const lbl = document.createElement('div'); lbl.textContent = `${labelFor(n)} (n=${n})`;
+    item.appendChild(sw); item.appendChild(lbl);
+    item.addEventListener('click', ()=>{ shellFilter.value=String(idx); shellFilter.dispatchEvent(new Event('change')); });
+    glLegend.appendChild(item);
+  });
+  if(shells.length===0){
+    glLegend.innerHTML = '<div class="help">Legend will appear once you enter n values.</div>';
+  }
+}
+function updateShellFilter(shells){
+  shellFilter.innerHTML = '';
+  const optAll = document.createElement('option'); optAll.value = 'all'; optAll.textContent = 'All shells';
+  shellFilter.appendChild(optAll);
+  shells.forEach((n,idx)=>{
+    const o = document.createElement('option'); o.value = String(idx); o.textContent = `Shell n=${n}`;
+    shellFilter.appendChild(o);
+  });
+}
+
+function validateShells(){
+  const raw = parseShells(shellInput.value);
+  const shells = dedupe(raw);
+  const errors = [];
+
+  if(raw.length === 0){ errors.push('Enter one or more positive integers (e.g., 1,2,3).'); }
+  raw.forEach((n,i)=>{
+    if(!Number.isInteger(n)) errors.push(`Value #${i+1} is not an integer.`);
+    if(n<=0) errors.push(`n must be ≥ 1; got ${n}.`);
+  });
+  if(shells.length !== raw.length){
+    errors.push('Duplicate n values detected; each shell should appear once.');
+  }
+
+  if(shells.length>0){
+    const lines = shells.map(n => `n=${n} → ${labelFor(n)} (atoms: ${atomsFor(n).toLocaleString()})`);
+    const total = shells.reduce((acc,n)=>acc+atomsFor(n),0);
+    shellHint.textContent = lines.join('\n') + `\nTotal atoms: ${total.toLocaleString()}`;
+  } else {
+    shellHint.textContent = 'Type n values (e.g., 1,2,3) to see shell names and atom counts here…';
+  }
+
+  if(errors.length>0){
+    shellStatus.children[0].textContent = errors.join(' ');
+    shellStatus.className = 'status error';
+    shellStatus.hidden = false;
+  } else {
+    shellStatus.children[0].textContent = 'Shell list looks good.';
+    shellStatus.className = 'status ok';
+    shellStatus.hidden = false;
+  }
+  renderBars(shells);
+  renderLegend(shells);
+  updateShellFilter(shells);
+  return { ok: errors.length===0, shells };
+}
+
+function validateSeed(){
+  const v = seedInput.value.trim();
+  if(v === ''){ seedStatus.hidden = true; return { ok:true }; }
+  const n = Number(v);
+  if(Number.isInteger(n)){
+    seedStatus.textContent = 'Seed looks good.';
+    seedStatus.className = 'status ok';
+    seedStatus.hidden = false;
+    return { ok:true };
+  } else {
+    seedStatus.textContent = 'Seed must be an integer (e.g., 42).';
+    seedStatus.className = 'status error';
+    seedStatus.hidden = false;
+    return { ok:false };
+  }
+}
+
+function validateVac(){
+  const v = Number(vacInput.value);
+  if(Number.isFinite(v) && v>=0){
+    vacStatus.textContent = 'Vacuum padding looks good.';
+    vacStatus.className = 'status ok';
+    vacStatus.hidden = false;
+    return { ok:true };
+  } else {
+    vacStatus.textContent = 'Vacuum padding must be a number ≥ 0 (e.g., 10).';
+    vacStatus.className = 'status error';
+    vacStatus.hidden = false;
+    return { ok:false };
+  }
+}
+
+function validateBond(){
+  const v = Number(bondInput.value);
+  if(Number.isFinite(v) && v>0){
+    bondStatus.textContent = 'Bond scale looks good.';
+    bondStatus.className = 'status ok';
+    bondStatus.hidden = false;
+    return { ok:true };
+  } else {
+    bondStatus.textContent = 'Bond scale must be a number > 0 (e.g., 1.00).';
+    bondStatus.className = 'status error';
+    bondStatus.hidden = false;
+    return { ok:false };
+  }
+}
+
+function hasReference(){ return refInput.files && refInput.files.length>0; }
+
+function validateAlphaOptional(){
+  const alphaRaw = alphaInput.value.trim();
+  if(hasReference()){
+    if(alphaRaw === '') {
+      alphaStatus.textContent = 'α left blank: will use auto-fit placeholder.';
+      alphaStatus.className = 'status warn';
+      alphaStatus.hidden = false;
+      return { ok:true, alpha:null };
+    }
+    const num = Number(alphaRaw);
+    if(Number.isFinite(num) && num>0){
+      alphaStatus.textContent = 'Alpha looks good.';
+      alphaStatus.className = 'status ok';
+      alphaStatus.hidden = false;
+      return { ok:true, alpha:num };
+    } else {
+      alphaStatus.textContent = 'When set, α must be > 0.';
+      alphaStatus.className = 'status error';
+      alphaStatus.hidden = false;
+      return { ok:false };
+    }
+  } else {
+    const num = Number(alphaRaw);
+    if(Number.isFinite(num) && num>0){
+      alphaStatus.textContent = 'Alpha looks good.';
+      alphaStatus.className = 'status ok';
+      alphaStatus.hidden = false;
+      return { ok:true, alpha:num };
+    } else {
+      alphaStatus.textContent = 'No reference file: α is required and must be > 0 (try 3.54).';
+      alphaStatus.className = 'status error';
+      alphaStatus.hidden = false;
+      return { ok:false };
+    }
+  }
+}
+
+function validateReference(shells){
+  if(hasReference()){
+    refStatus.textContent = 'Reference detected. α optional (auto-fit placeholder). Ensure n_ref matches one of your n values.';
+    refStatus.className = 'status ok';
+    refStatus.hidden = false;
+
+    const raw = nrefInput.value.trim();
+    if(raw === ''){
+      nrefStatus.textContent = 'Provide n_ref to align reference (e.g., 2 for C240).';
+      nrefStatus.className = 'status error';
+      nrefStatus.hidden = false;
+      return { ok:false };
+    }
+    const n = Number(raw);
+    if(!Number.isInteger(n) || n<=0){
+      nrefStatus.textContent = 'n_ref must be a positive integer.';
+      nrefStatus.className = 'status error';
+      nrefStatus.hidden = false;
+      return { ok:false };
+    }
+    if(shells.length>0 && !shells.includes(n)){
+      nrefStatus.textContent = `n_ref must be one of your n values: [${shells.join(', ')}].`;
+      nrefStatus.className = 'status error';
+      nrefStatus.hidden = false;
+      return { ok:false };
+    }
+    nrefStatus.textContent = 'Reference n_ref looks good.';
+    nrefStatus.className = 'status ok';
+    nrefStatus.hidden = false;
+
+    const file = refInput.files[0];
+    parseReferenceFile(file).then(metrics=>{
+      refMetricsEl.textContent = `Reference atoms: ${metrics.count}
+Centroid: (${metrics.cx.toFixed(3)}, ${metrics.cy.toFixed(3)}, ${metrics.cz.toFixed(3)}) Å
+Mean radius: ${metrics.meanR.toFixed(3)} Å
+Min/Max radius: ${metrics.minR.toFixed(3)} / ${metrics.maxR.toFixed(3)} Å`;
+    }).catch(err=>{
+      refMetricsEl.textContent = 'Failed to parse reference: ' + err.message;
+    });
+
+    return { ok:true, n_ref:n };
+  } else {
+    refStatus.textContent = 'No reference provided. Using explicit α.';
+    refStatus.className = 'status warn';
+    refStatus.hidden = false;
+
+    nrefStatus.hidden = true;
+    refMetricsEl.textContent = 'Upload a file to see its atom count and measured radius.';
+    return { ok:true, n_ref:null };
+  }
+}
+
+async function parseReferenceFile(file){
+  const text = await file.text();
+  const lines = text.split(/\r?\n/);
+  const pts = [];
+  for(const line of lines){
+    const m = line.trim().match(/^C\s+(-?\d+(\.\d+)?)\s+(-?\d+(\.\d+)?)\s+(-?\d+(\.\d+)?)/i);
+    if(m){
+      pts.push([parseFloat(m[1]), parseFloat(m[3]), parseFloat(m[5])]);
+    }
+  }
+  if(pts.length===0) throw new Error('No “C x y z” lines found.');
+  let sx=0, sy=0, sz=0; pts.forEach(p=>{ sx+=p[0]; sy+=p[1]; sz+=p[2]; });
+  const cx=sx/pts.length, cy=sy/pts.length, cz=sz/pts.length;
+  const rs = pts.map(p=> Math.hypot(p[0]-cx, p[1]-cy, p[2]-cz));
+  const meanR = rs.reduce((a,b)=>a+b,0)/rs.length;
+  const minR = Math.min(...rs), maxR = Math.max(...rs);
+  return { count: pts.length, cx, cy, cz, meanR, minR, maxR };
+}
+
+/* ==============================
+ * Fibonacci-guided GC + smoothing
+ * ============================== */
+function sphericalFibonacciPoints(M, improved=true){
+  const ga = Math.PI * (3 - Math.sqrt(5));
+  const pts = new Float32Array(M*3);
+  for(let i=0;i<M;i++){
+    const t = (i + 0.5) / M;
+    let z = 1 - 2*t;
+    let phi = i * ga;
+    const r_xy = Math.sqrt(Math.max(0, 1 - z*z));
+    if(improved){
+      const eps = 1/M;
+      z   += (Math.sin(i*ga)*eps);
+      phi += (Math.cos(i*ga)*eps);
+    }
+    const x = r_xy*Math.cos(phi), y = r_xy*Math.sin(phi);
+    const normv = Math.hypot(x,y,z) || 1;
+    const ix = i*3;
+    pts[ix]=x/normv; pts[ix+1]=y/normv; pts[ix+2]=z/normv;
+  }
+  return pts;
+}
+function sph2cart(theta,phi,R=1){ const s=Math.sin(theta); return [R*s*Math.cos(phi), R*s*Math.sin(phi), R*Math.cos(theta)]; }
+function cart2sph(x,y,z){ const r=Math.hypot(x,y,z)||1; return [Math.acos(z/r), Math.atan2(y,x)]; }
+function fitOrientationField(auxPts){
+  const M=auxPts.length/3;
+  function nearestIndex(p){
+    let best=-1, bd=Infinity;
+    for(let i=0;i<M;i++){
+      const ix=i*3;
+      const dx=p[0]-auxPts[ix], dy=p[1]-auxPts[ix+1], dz=p[2]-auxPts[ix+2];
+      const d=dx*dx+dy*dy+dz*dz; if(d<bd){ bd=d; best=i; }
+    }
+    return best;
+  }
+  function tangentAlong(idx){
+    const ix=idx*3, p=[auxPts[ix],auxPts[ix+1],auxPts[ix+2]];
+    const up=[0,0,1];
+    const v1=[ up[1]*p[2]-up[2]*p[1], up[2]*p[0]-up[0]*p[2], up[0]*p[1]-up[1]*p[0] ];
+    const n=Math.hypot(v1[0],v1[1],v1[2])||1; return [v1[0]/n, v1[1]/n, v1[2]/n];
+  }
+  return function ufield(theta,phi){
+    const p=sph2cart(theta,phi,1.0);
+    const k=nearestIndex(p), k2=(k+1)%M;
+    const t1=tangentAlong(k), t2=tangentAlong(k2);
+    const u=[ t1[0]+0.7*t2[0], t1[1]+0.7*t2[1], t1[2]+0.7*t2[2] ];
+    const n=Math.hypot(u[0],u[1],u[2])||1; return [u[0]/n, u[1]/n, u[2]/n];
+  }
+}
+function buildShell(n, alpha, vacuum, bondScale, fibGuide=0.8){
+  const count = atomsFor(n);
+  const unit = sphericalFibonacciPoints(count, true);
+  const r = (alpha * n) + (Number(vacuum)||0)*0.02 + (Number(bondScale)||1)*0.01;
+
+  // initial positions
+  const pos = new Float32Array(count*3);
+  for(let i=0;i<count;i++){ const ix=i*3; pos[ix]=unit[ix]*r; pos[ix+1]=unit[ix+1]*r; pos[ix+2]=unit[ix+2]*r; }
+
+  // orientation field
+  const auxCount = Math.min(1500, count);
+  const auxPts   = unit.subarray(0, auxCount*3);
+  const ufield   = fitOrientationField(auxPts);
+
+  // spatial hash
+  const cell = r/8;
+  const grid = new Map();
+  const key = (ix,iy,iz)=> `${ix}|${iy}|${iz}`;
+  for(let i=0;i<count;i++){
+    const ix=Math.floor(pos[i*3]/cell), iy=Math.floor(pos[i*3+1]/cell), iz=Math.floor(pos[i*3+2]/cell);
+    const k=key(ix,iy,iz); if(!grid.has(k)) grid.set(k,[]); grid.get(k).push(i);
+  }
+
+  const neighbors = new Int32Array(count*3); neighbors.fill(-1);
+  function deg(i){ const b=i*3; let d=0; if(neighbors[b]!==-1)d++; if(neighbors[b+1]!==-1)d++; if(neighbors[b+2]!==-1)d++; return d; }
+  function addEdge(i,j){
+    const bi=i*3, bj=j*3;
+    for(let k=0;k<3;k++){ if(neighbors[bi+k]===j) return; }
+    for(let k=0;k<3;k++){ if(neighbors[bi+k]===-1){ neighbors[bi+k]=j; break; } }
+    for(let k=0;k<3;k++){ if(neighbors[bj+k]===-1){ neighbors[bj+k]=i; break; } }
+  }
+  function neighborhood(i, kmax=16){
+    const x=pos[i*3], y=pos[i*3+1], z=pos[i*3+2];
+    const ix=Math.floor(x/cell), iy=Math.floor(y/cell), iz=Math.floor(z/cell);
+    const idxs=[];
+    for(let dx=-1;dx<=1;dx++){
+      for(let dy=-1;dy<=1;dy++){
+        for(let dz=-1;dz<=1;dz++){
+          const list=grid.get(key(ix+dx,iy+dy,iz+dz)); if(!list) continue;
+          for(const j of list){ if(j!==i) idxs.push(j); }
+        }
+      }
+    }
+    idxs.sort((a,b)=> (Math.hypot(pos[i*3]-pos[a*3], pos[i*3+1]-pos[a*3+1], pos[i*3+2]-pos[a*3+2]) -
+                       Math.hypot(pos[i*3]-pos[b*3], pos[i*3+1]-pos[b*3+1], pos[i*3+2]-pos[b*3+2])));
+    return idxs.slice(0,kmax);
+  }
+
+  for(let i=0;i<count;i++){
+    if(deg(i)>=3) continue;
+    const [th,ph] = cart2sph(pos[i*3], pos[i*3+1], pos[i*3+2]);
+    const u = ufield(th,ph);
+    const cand = neighborhood(i, 16);
+    cand.sort((a,b)=>{
+      const da = Math.hypot(pos[i*3]-pos[a*3], pos[i*3+1]-pos[a*3+1], pos[i*3+2]-pos[a*3+2]);
+      const db = Math.hypot(pos[i*3]-pos[b*3], pos[i*3+1]-pos[b*3+1], pos[i*3+2]-pos[b*3+2]);
+      const vax = (pos[a*3]-pos[i*3])/(da||1), vay = (pos[a*3+1]-pos[i*3+1])/(da||1), vaz = (pos[a*3+2]-pos[i*3+2])/(da||1);
+      const vbx = (pos[b*3]-pos[i*3])/(db||1), vby = (pos[b*3+1]-pos[i*3+1])/(db||1), vbz = (pos[b*3+2]-pos[i*3+2])/(db||1);
+      const sa = fibGuide*(u[0]*vax+u[1]*vay+u[2]*vaz) - 0.4*Math.abs(da-1.42);
+      const sb = fibGuide*(u[0]*vbx+u[1]*vby+u[2]*vbz) - 0.4*Math.abs(db-1.42);
+      return sb - sa;
+    });
+    for(const j of cand){ if(deg(i)>=3) break; if(deg(j)>=3) continue; addEdge(i,j); }
+  }
+  for(let i=0;i<count;i++){
+    const need = 3 - deg(i); if(need<=0) continue;
+    const cand = neighborhood(i, 24).filter(j=>neighbors[i*3]!==j && neighbors[i*3+1]!==j && neighbors[i*3+2]!==j);
+    for(const j of cand){ if(deg(i)>=3) break; if(deg(j)>=3) continue; addEdge(i,j); }
+  }
+
+  // smoothing
+  const iters = 30;
+  const F = new Float32Array(count*3);
+  for(let t=0;t<iters;t++){
+    F.fill(0);
+    for(let i=0;i<count;i++){
+      const bi=i*3;
+      for(let k=0;k<3;k++){
+        const j=neighbors[bi+k]; if(j<0) continue;
+        const d = Math.hypot(pos[i*3]-pos[j*3], pos[i*3+1]-pos[j*3+1], pos[i*3+2]-pos[j*3+2]) || 1;
+        const f = 0.3*(d - 1.42);
+        const vx = (pos[j*3]-pos[i*3])/d, vy = (pos[j*3+1]-pos[i*3+1])/d, vz = (pos[j*3+2]-pos[i*3+2])/d;
+        F[i*3]+=vx*f; F[i*3+1]+=vy*f; F[i*3+2]+=vz*f;
+        F[j*3]-=vx*f; F[j*3+1]-=vy*f; F[j*3+2]-=vz*f;
+      }
+    }
+    for(let i=0;i<count;i++){ pos[i*3]+=F[i*3]*0.1; pos[i*3+1]+=F[i*3+1]*0.1; pos[i*3+2]+=F[i*3+2]*0.1; }
+    for(let i=0;i<count;i++){
+      const rr = Math.hypot(pos[i*3], pos[i*3+1], pos[i*3+2]) || 1;
+      const s  = r/rr;
+      pos[i*3]*=s; pos[i*3+1]*=s; pos[i*3+2]*=s;
+    }
+  }
+
+  // edges list
+  const edges = [];
+  for(let i=0;i<count;i++){
+    const b=i*3;
+    for(let k=0;k<3;k++){ const j=neighbors[b+k]; if(j>-1 && j>i) edges.push(i,j); }
+  }
+  const edgeIdx = new Uint32Array(edges);
+
+  return { pos, neighbors, radius:r, edgeIdx };
+}
+
+function updateAll(){
+  const { shells } = validateShells();
+  validateSeed();
+  validateVac();
+  validateBond();
+  validateReference(shells);
+  validateAlphaOptional();
+}
+
+/* ==============================
+ * WebGL renderer (balls + bonds + axes)
+ * ============================== */
+const gl = glcanvas.getContext('webgl', {antialias:true});
+let glState=null;
+
+function initGL(){
+    if(!gl){ return; }
+    const vsSrc = `
+      attribute vec3 aPos;
+      attribute vec3 aCol;
+      varying vec3 vCol;
+      uniform mat4 uProj, uView;
+      uniform float uPointSize;
+      void main(){
+        gl_Position = uProj * uView * vec4(aPos, 1.0);
+        gl_PointSize = uPointSize;
+        vCol = aCol;
+      }`;
+    const fsSrc = `
+      precision mediump float;
+      varying vec3 vCol;
+      void main(){
+        vec2 uv = gl_PointCoord*2.0-1.0;
+        float r = dot(uv, uv);
+        if(r>1.0) discard;
+        float z = sqrt(1.0 - r);
+        vec3 N = normalize(vec3(uv, z));
+        float diff = max(dot(N, normalize(vec3(0.6,0.7,0.5))), 0.0);
+        vec3 col = vCol * (0.25 + 0.75*diff);
+        gl_FragColor = vec4(col, 1.0);
+      }`;
+    const lvs = `
+      attribute vec3 aPos;
+      attribute vec3 aCol;
+      varying vec3 vCol;
+      uniform mat4 uProj, uView;
+      void main(){ gl_Position = uProj * uView * vec4(aPos, 1.0); vCol = aCol; }`;
+    const lfs = `
+      precision mediump float;
+      varying vec3 vCol;
+      void main(){ gl_FragColor = vec4(vCol, 1.0); }`;
+
+    const progP = createProgram(vsSrc, fsSrc);
+    const progL = createProgram(lvs, lfs);
+
+    gl.enable(gl.BLEND); gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+
+    glState = {
+      progP, progL,
+      aPosP: gl.getAttribLocation(progP,'aPos'),
+      aColP: gl.getAttribLocation(progP,'aCol'),
+      uProjP: gl.getUniformLocation(progP,'uProj'),
+      uViewP: gl.getUniformLocation(progP,'uView'),
+      uPointSize: gl.getUniformLocation(progP,'uPointSize'),
+
+      aPosL: gl.getAttribLocation(progL,'aPos'),
+      aColL: gl.getAttribLocation(progL,'aCol'),
+      uProjL: gl.getUniformLocation(progL,'uProj'),
+      uViewL: gl.getUniformLocation(progL,'uView'),
+
+      vboPos: gl.createBuffer(),
+      vboCol: gl.createBuffer(),
+      lboPos: gl.createBuffer(),
+      lboCol: gl.createBuffer(),
+
+      rotX:0.4, rotY:0.8, zoom:2.8,
+      points:new Float32Array(), colors:new Float32Array(), lines:new Float32Array(), lineColors:new Float32Array(),
+    };
+    attachGLControls();
+    renderGL();
+}
+function createShader(type, src){ const sh=gl.createShader(type); gl.shaderSource(sh, src); gl.compileShader(sh); return sh; }
+function createProgram(vsSrc, fsSrc){
+  const vs=createShader(gl.VERTEX_SHADER, vsSrc);
+  const fs=createShader(gl.FRAGMENT_SHADER, fsSrc);
+  const p=gl.createProgram();
+  gl.attachShader(p,vs); gl.attachShader(p,fs); gl.linkProgram(p);
+  return p;
+}
+function mat4Perspective(fovy, aspect, near, far){
+  const f=1.0/Math.tan(fovy/2), nf=1/(near-far);
+  return [f/aspect,0,0,0, 0,f,0,0,  0,0,(far+near)*nf,-1,  0,0,(2*far*near)*nf,0];
+}
+function mat4Translate(x,y,z){ return [1,0,0,0, 0,1,0,0, 0,0,1,0, x,y,z,1]; }
+function mat4RotateX(a){ const c=Math.cos(a), s=Math.sin(a); return [1,0,0,0, 0,c,s,0, 0,-s,c,0, 0,0,0,1]; }
+function mat4RotateY(a){ const c=Math.cos(a), s=Math.sin(a); return [c,0,-s,0, 0,1,0,0, s,0,c,0, 0,0,0,1]; }
+function matMul(a,b){ const out=new Array(16).fill(0); for(let i=0;i<4;i++)for(let j=0;j<4;j++)for(let k=0;k<4;k++)out[i*4+j]+=a[i*4+k]*b[k*4+j]; return out; }
+
+function renderGL(){
+  if(!gl || !glState) return;
+  const dpr=window.devicePixelRatio||1; const rect=glcanvas.getBoundingClientRect();
+  glcanvas.width=Math.floor(rect.width*dpr); glcanvas.height=Math.floor(rect.height*dpr);
+
+  gl.viewport(0,0, glcanvas.width, glcanvas.height);
+  gl.clearColor(1,1,1,1); gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+  const aspect = glcanvas.width/glcanvas.height;
+  const proj = mat4Perspective(1.0, aspect, 0.1, 100.0);
+  const t = mat4Translate(0,0,-glState.zoom);
+  const rx = mat4RotateX(glState.rotX), ry=mat4RotateY(glState.rotY);
+  const view = matMul(t, matMul(rx,ry));
+
+  // points
+  gl.useProgram(glState.progP);
+  gl.uniformMatrix4fv(glState.uProjP,false,new Float32Array(proj));
+  gl.uniformMatrix4fv(glState.uViewP,false,new Float32Array(view));
+  gl.uniform1f(glState.uPointSize, 6.5);
+
+  gl.bindBuffer(gl.ARRAY_BUFFER, glState.vboPos);
+  gl.bufferData(gl.ARRAY_BUFFER, glState.points, gl.DYNAMIC_DRAW);
+  gl.enableVertexAttribArray(glState.aPosP);
+  gl.vertexAttribPointer(glState.aPosP, 3, gl.FLOAT, false, 0, 0);
+
+  gl.bindBuffer(gl.ARRAY_BUFFER, glState.vboCol);
+  gl.bufferData(gl.ARRAY_BUFFER, glState.colors, gl.DYNAMIC_DRAW);
+  gl.enableVertexAttribArray(glState.aColP);
+  gl.vertexAttribPointer(glState.aColP, 3, gl.FLOAT, false, 0, 0);
+
+  gl.drawArrays(gl.POINTS, 0, glState.points.length/3);
+
+  // bonds (lines)
+  if(showBonds.checked){
+    gl.useProgram(glState.progL);
+    gl.uniformMatrix4fv(glState.uProjL,false,new Float32Array(proj));
+    gl.uniformMatrix4fv(glState.uViewL,false,new Float32Array(view));
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, glState.lboPos);
+    gl.bufferData(gl.ARRAY_BUFFER, glState.lines, gl.DYNAMIC_DRAW);
+    gl.enableVertexAttribArray(glState.aPosL);
+    gl.vertexAttribPointer(glState.aPosL, 3, gl.FLOAT, false, 0, 0);
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, glState.lboCol);
+    gl.bufferData(gl.ARRAY_BUFFER, glState.lineColors, gl.DYNAMIC_DRAW);
+    gl.enableVertexAttribArray(glState.aColL);
+    gl.vertexAttribPointer(glState.aColL, 3, gl.FLOAT, false, 0, 0);
+
+    gl.drawArrays(gl.LINES, 0, glState.lines.length/3);
+  }
+
+  if(showAxes.checked){
+    drawAxes(proj, view);
+  }
+}
+function drawAxes(proj, view){
+  const axes = new Float32Array([ 0,0,0, 1,0,0,  0,0,0, 0,1,0,  0,0,0, 0,0,1 ]);
+  const cols = new Float32Array([ 1,0,0, 1,0,0,  0,0.8,0, 0,0.8,0,  0,0,1, 0,0,1 ]);
+
+  gl.useProgram(glState.progL);
+  gl.uniformMatrix4fv(glState.uProjL,false,new Float32Array(proj));
+  gl.uniformMatrix4fv(glState.uViewL,false,new Float32Array(view));
+
+  gl.bindBuffer(gl.ARRAY_BUFFER, glState.lboPos);
+  gl.bufferData(gl.ARRAY_BUFFER, axes, gl.DYNAMIC_DRAW);
+  gl.enableVertexAttribArray(glState.aPosL);
+  gl.vertexAttribPointer(glState.aPosL, 3, gl.FLOAT, false, 0, 0);
+
+  gl.bindBuffer(gl.ARRAY_BUFFER, glState.lboCol);
+  gl.bufferData(gl.ARRAY_BUFFER, cols, gl.DYNAMIC_DRAW);
+  gl.enableVertexAttribArray(glState.aColL);
+  gl.vertexAttribPointer(glState.aColL, 3, gl.FLOAT, false, 0, 0);
+
+  gl.drawArrays(gl.LINES, 0, axes.length/3);
+}
+function attachGLControls(){
+  let dragging=false, lx=0, ly=0;
+  glcanvas.addEventListener('mousedown', (e)=>{ dragging=true; lx=e.clientX; ly=e.clientY; });
+  window.addEventListener('mouseup', ()=>{ dragging=false; });
+  window.addEventListener('mousemove', (e)=>{
+    if(!dragging) return;
+    const dx=e.clientX-lx, dy=e.clientY-ly; lx=e.clientX; ly=e.clientY;
+    glState.rotY += dx*0.005; glState.rotX += dy*0.005;
+    renderGL();
+  });
+  glcanvas.addEventListener('wheel', (e)=>{
+    e.preventDefault();
+    glState.zoom += (e.deltaY>0 ? 0.2 : -0.2);
+    glState.zoom = Math.max(0.6, Math.min(10, glState.zoom));
+    renderGL();
+  }, {passive:false});
+  window.addEventListener('resize', renderGL);
+}
+
+/* ==============================
+ * UI wiring
+ * ============================== */
+function updateWebGLPreview(shellsData){
+  // shellsData: array of {atoms: [{x,y,z}], edges: [[i,j]], shellIndex}
+  const filter = shellFilter.value; // 'all' or index
+  const points=[]; const colors=[]; const lines=[]; const lineColors=[];
+  shellsData.forEach((sd, sidx)=>{
+    if(filter!=='all' && String(sidx)!==filter) return;
+    const hue=210 + sidx*22;
+    const rgb=hslToRgb(hue/360, 0.70, 0.52);
+    sd.atoms.forEach(a=>{
+      points.push(a.x,a.y,a.z);
+      colors.push(rgb[0],rgb[1],rgb[2]);
+    });
+    sd.edges.forEach(([i,j])=>{
+      const ai=sd.atoms[i], aj=sd.atoms[j];
+      lines.push(ai.x,ai.y,ai.z, aj.x,aj.y,aj.z);
+      lineColors.push(rgb[0],rgb[1],rgb[2], rgb[0],rgb[1],rgb[2]);
+    });
+  });
+
+  glState.points = new Float32Array(points);
+  glState.colors = new Float32Array(colors);
+  glState.lines  = new Float32Array(lines);
+  glState.lineColors = new Float32Array(lineColors);
+  renderGL();
+
+  /* ======== NEW: also update the Crystal Toolkit viewer with combined structure ========
+     This block is the ONLY place we touch: we construct a pymatgen-like object (molecule)
+     from shellsData and set it on the crystal-toolkit-scene element (#mpviewer).
+     This keeps your original GL viewer untouched and synchronized with the MP viewer.
+  ================================================================================ */
+  try {
+    if(window && mpViewerEl && typeof mpViewerEl !== 'undefined') {
+      // Flatten atoms across shells (respecting shellFilter: use what we already pushed into points)
+      const combinedAtoms = [];
+      // iterate over shellsData but apply same filter logic as above
+      shellsData.forEach((sd, sidx)=>{
+        if(filter!=='all' && String(sidx)!==filter) return;
+        sd.atoms.forEach(a => combinedAtoms.push({x:a.x, y:a.y, z:a.z}));
+      });
+      if(combinedAtoms.length>0){
+        // compute bounding box size to supply lattice matrix (viewer expects either structure or molecule)
+        let maxR = 0;
+        combinedAtoms.forEach(a => { maxR = Math.max(maxR, Math.hypot(a.x, a.y, a.z)); });
+        const box = 2 * (maxR + 4.0);
+        const pymatgenLike = {
+          "@class": "pymatgen.core.structure.Molecule",
+          "composition": { "C": combinedAtoms.length },
+          "sites": combinedAtoms.map(a => ({
+            "species": [{ "element": "C", "occu": 1 }],
+            "xyz": [a.x, a.y, a.z]
+          })),
+          "charge": 0,
+          "spin_multiplicity": 1,
+          "lattice": {
+            "matrix": [[box,0,0],[0,box,0],[0,0,box]],
+            "a": box, "b": box, "c": box, "alpha":90, "beta":90, "gamma":90
+          }
+        };
+        // attempt to set structure/data on the component (various CT builds accept different props)
+        try { mpViewerEl.structure = pymatgenLike; } catch(e){}
+        try { mpViewerEl.data = pymatgenLike; } catch(e){}
+        try { mpViewerEl.setAttribute('data-structure', JSON.stringify(pymatgenLike)); } catch(e){}
+        if(typeof mpViewerEl.loadStructure === 'function') {
+          try { mpViewerEl.loadStructure(pymatgenLike); } catch(e){}
+        }
+        // dispatch an event (some versions listen for custom events)
+        try { mpViewerEl.dispatchEvent(new CustomEvent('structureUpdated', { detail: pymatgenLike })); } catch(e){}
+      }
+    }
+  } catch(err){
+    console.warn('Could not update MP viewer:', err);
+  }
+  /* ================================================================================== */
+}
+function hslToRgb(h, s, l){
+  const a = s*Math.min(l,1-l);
+  const f = (n,k=(n+h*12)%12)=> l - a*Math.max(Math.min(k-3, 9-k, 1), -1);
+  return [f(0), f(8), f(4)];
+}
+
+/* ==============================
+ * Exports
+ * ============================== */
+function toXYZ(atoms, meta){
+  const header = `${atoms.length}\n${meta}\n`;
+  const lines = atoms.map(a => `C ${a.x.toFixed(6)} ${a.y.toFixed(6)} ${a.z.toFixed(6)}`);
+  return header + lines.join('\n');
+}
+function toCIF(atoms, meta){
+  let maxR=0; atoms.forEach(a => { maxR=Math.max(maxR, Math.hypot(a.x,a.y,a.z)); });
+  const L = 2 * (maxR + 2.0);
+  const lines = atoms.map((a,i)=>{
+    const fx = (a.x + L/2)/L, fy=(a.y + L/2)/L, fz=(a.z + L/2)/L;
+    const label = 'C' + (i+1);
+    return `  ${label}  C  ${fx.toFixed(6)}  ${fy.toFixed(6)}  ${fz.toFixed(6)}`;
+  });
+  return `data_onion
+_audit_creation_method          'Carbon nano-onion (mock)'
+_cell_length_a                 ${L.toFixed(5)}
+_cell_length_b                 ${L.toFixed(5)}
+_cell_length_c                 ${L.toFixed(5)}
+_cell_angle_alpha              90
+_cell_angle_beta               90
+_cell_angle_gamma              90
+_symmetry_space_group_name_H-M 'P 1'
+_symmetry_Int_Tables_number    1
+loop_
+  _atom_site_label
+  _atom_site_type_symbol
+  _atom_site_fract_x
+  _atom_site_fract_y
+  _atom_site_fract_z
+${lines.join('\n')}
+# ${meta}
+`;
+}
+function toLAMMPSData(atoms){
+  const lines = atoms.map((a,i)=> `${i+1} 1 ${a.x.toFixed(6)} ${a.y.toFixed(6)} ${a.z.toFixed(6)}`);
+  return `LAMMPS data file via UI
+
+${atoms.length} atoms
+1 atom types
+
+0.0  0.0  xlo xhi
+0.0  0.0  ylo yhi
+0.0  0.0  zlo zhi
+
+Masses
+1 12.011
+
+Atoms # atomic
+${lines.join('\n')}
+`;
+}
+function toLAMMPSInput(prefix){
+  return `units real
+atom_style atomic
+read_data ${prefix}.data
+
+pair_style airebo/morse 3.0 1 1 1
+pair_coeff * * CH.airebo-m C
+
+neighbor 2.0 bin
+neigh_modify every 1 delay 0 check yes
+
+velocity all create 5.0 12345 mom yes rot yes dist gaussian
+fix 1 all nvt temp 5.0 5.0 100.0
+timestep 0.25
+run 5000
+unfix 1
+
+min_style cg
+minimize 1.0e-8 1.0e-10 10000 100000
+
+write_data ${prefix}_relaxed.data
+`;
+}
+function downloadTextFile(filename, text){
+  const blob=new Blob([text],{type:'text/plain'}); const url=URL.createObjectURL(blob);
+  const a=document.createElement('a'); a.href=url; a.download=filename; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+}
+
+/* ==============================
+ * Orchestration
+ * ============================== */
+let lastAtoms=null, lastMeta='', lastPrefix='';
+let lastNN = { d1:null, d2:null, d3:null };
+let lastShellsData=[];
+
+function drawHistogram(distances, orderLabel){
+  const ctx = histCtx;
+  const W = histCanvas.width, H = histCanvas.height;
+  ctx.clearRect(0,0,W,H);
+
+  const minBin = 0.8, maxBin = 2.2, binCount = 28;
+  const binW = (maxBin - minBin) / binCount;
+  const bins = new Array(binCount).fill(0);
+  distances.forEach(d=>{
+    if(Number.isFinite(d) && d>=minBin && d<maxBin){
+      const idx = Math.floor((d-minBin)/binW);
+      bins[idx]++;
+    }
+  });
+  const maxVal = Math.max(1, ...bins);
+
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0,0,W,H);
+  ctx.strokeStyle = '#e5e7eb';
+  for(let i=0;i<=4;i++){
+    const y = H - (i/4)* (H-24) - 14;
+    ctx.beginPath(); ctx.moveTo(40, y); ctx.lineTo(W-10, y); ctx.stroke();
+  }
+
+  const leftPad = 40, rightPad = 10, bottomPad = 24, topPad = 10;
+  const plotW = W - leftPad - rightPad;
+  const plotH = H - topPad - bottomPad;
+  for(let i=0;i<binCount;i++){
+    const x = leftPad + (i/binCount)*plotW;
+    const h = (bins[i]/maxVal)*plotH;
+    ctx.fillStyle = 'rgba(77,140,240,0.85)';
+    ctx.fillRect(x, H-bottomPad-h, plotW/binCount-2, h);
+  }
+
+  ctx.fillStyle = '#334155';
+  ctx.font = '12px sans-serif';
+  ctx.fillText(`${orderLabel} nearest-neighbor distance (Å)`, W/2-110, H-6);
+
+  for(let t=minBin; t<=maxBin+1e-6; t+=0.2){
+    const x = leftPad + ((t-minBin)/(maxBin-minBin))*plotW;
+    ctx.fillText(t.toFixed(1), x-8, H-6);
+  }
+
+  document.getElementById('histHint').textContent =
+    `Histogram built from ${distances.length.toLocaleString()} atoms; bin range ${minBin}–${maxBin} Å • Order: ${orderLabel}`;
+}
+
+function updateInspector(distances){
+  if(!distances || distances.length===0){
+    nnMinEl.textContent='—'; nnMeanEl.textContent='—'; nnMaxEl.textContent='—';
+    return;
+  }
+  const finite = distances.filter(Number.isFinite);
+  const min = Math.min(...finite);
+  const max = Math.max(...finite);
+  const mean = finite.reduce((a,b)=>a+b,0)/finite.length;
+  nnMinEl.textContent = min.toFixed(3);
+  nnMeanEl.textContent = mean.toFixed(3);
+  nnMaxEl.textContent = max.toFixed(3);
+}
+
+nnWorker.onmessage = (ev) => {
+  lastNN = ev.data;
+  const order = nnOrderSel.value;
+  const arr = order==='1' ? lastNN.d1 : order==='2' ? lastNN.d2 : lastNN.d3;
+  const label = order==='1' ? '1st' : order==='2' ? '2nd' : '3rd';
+  drawHistogram(arr, label);
+  updateInspector(arr);
+};
+
+function requestNNDistances(allAtomsArr){
+  // Flatten [{x,y,z}, ...] into Float32Array
+  const N = allAtomsArr.length;
+  const f32 = new Float32Array(N*3);
+  for(let i=0;i<N;i++){ const a=allAtomsArr[i]; const ix=i*3; f32[ix]=a.x; f32[ix+1]=a.y; f32[ix+2]=a.z; }
+  nnWorker.postMessage(f32, [f32.buffer]); // transfer
+}
+
+generateBtn.addEventListener('click', ()=>{
+  try{
+    finalStatus.hidden = true;
+    progressEl.textContent = '';
+
+    const shellsV = validateShells();
+    const seedV   = validateSeed();
+    const vacV    = validateVac();
+    const bondV   = validateBond();
+    const alphaV  = validateAlphaOptional();
+    const refV    = validateReference(shellsV.shells);
+
+    const allOk = shellsV.ok && seedV.ok && vacV.ok && bondV.ok && refV.ok && alphaV.ok;
+    if(!allOk){
+      finalStatus.textContent = 'Please fix the highlighted issues above before generating.';
+      finalStatus.className = 'status error';
+      finalStatus.hidden = false;
+      return;
+    }
+
+    finalStatus.textContent = 'All inputs validated. Generating…';
+    finalStatus.className = 'status ok';
+    finalStatus.hidden = false;
+
+    const payload = {
+      shells: shellsV.shells,
+      mode: modeSel.value,
+      seed: seedInput.value.trim()==='' ? null : Number(seedInput.value),
+      vacuumPadding: Number(vacuumPadding.value),
+      bondScale: Number(bondScale.value),
+      alpha: (alphaV.alpha ?? 3.54),
+      prefix: (prefixInput.value.trim() || `onion_${shellsV.shells.join('_')}`)
+    };
+
+    const rng = seededRandom(payload.seed);
+    lastShellsData=[]; let allAtoms=[];
+
+    payload.shells.forEach((n, sIdx) => {
+      progressEl.textContent = `Generating n=${n} → ${labelFor(n)} …`;
+      const sh = buildShell(n, payload.alpha, payload.vacuumPadding, payload.bondScale, 0.8);
+
+      // atoms array & edges
+      const atoms = new Array(sh.pos.length/3);
+      for(let i=0;i<atoms.length;i++){
+        atoms[i] = {x: sh.pos[i*3], y: sh.pos[i*3+1], z: sh.pos[i*3+2]};
+      }
+      const edges = [];
+      for(let i=0;i<atoms.length;i++){
+        for(let k=0;k<3;k++){
+          const j = sh.neighbors[i*3+k]; if(j>-1 && j>i) edges.push([i,j]);
+        }
+      }
+      lastShellsData.push({atoms, edges, shellIndex:sIdx});
+      allAtoms = allAtoms.concat(atoms);
+    });
+
+    // kNN via worker
+    requestNNDistances(allAtoms);
+
+    lastAtoms = allAtoms;
+    lastPrefix = payload.prefix;
+    lastMeta = `Carbon nano-onion (Fibonacci-guided GC). shells=${payload.shells.join(',')}; alpha=${payload.alpha}; mode=${payload.mode}; seed=${payload.seed??'auto'}; vacuum=${payload.vacuumPadding}; bondScale=${payload.bondScale}`;
+
+    // Enable downloads
+    downloadXYZBtn.disabled = false;
+    downloadCIFBtn.disabled = false;
+    exportLAMMPSBtn.disabled = false;
+
+    // Update GL
+    updateWebGLPreview(lastShellsData);
+
+    progressEl.textContent = `Done. Generated ${allAtoms.length.toLocaleString()} atoms. Choose XYZ/CIF/LAMMPS to download.`;
+  } catch(err){
+    console.error(err);
+    finalStatus.textContent = 'Generation failed: ' + (err?.message || String(err));
+    finalStatus.className = 'status error';
+    finalStatus.hidden = false;
+  }
+});
+
+nnOrderSel.addEventListener('change', ()=>{
+  const order = nnOrderSel.value;
+  const label = order==='1' ? '1st' : order==='2' ? '2nd' : '3rd';
+  const arr = order==='1' ? lastNN.d1 : order==='2' ? lastNN.d2 : lastNN.d3;
+  drawHistogram(arr, label);
+  updateInspector(arr);
+});
+
+downloadXYZBtn.addEventListener('click', ()=>{
+  if(!lastAtoms) return;
+  const xyzText = toXYZ(lastAtoms, lastMeta);
+  const fname = `${lastPrefix}.xyz`;
+  downloadTextFile(fname, xyzText);
+});
+downloadCIFBtn.addEventListener('click', ()=>{
+  if(!lastAtoms) return;
+  const cifText = toCIF(lastAtoms, lastMeta);
+  const fname = `${lastPrefix}.cif`;
+  downloadTextFile(fname, cifText);
+});
+exportLAMMPSBtn.addEventListener('click', ()=>{
+  if(!lastAtoms) return;
+  const data = toLAMMPSData(lastAtoms);
+  const input= toLAMMPSInput(lastPrefix);
+  downloadTextFile(`${lastPrefix}.data`, data);
+  downloadTextFile(`in.${lastPrefix}`, input);
+});
+
+resetBtn.addEventListener('click', ()=>{
+  shellInput.value = ''; modeSel.value='gc';
+  seedInput.value = ''; vacInput.value=''; bondInput.value='1.00';
+  refInput.value = ''; nrefInput.value=''; alphaInput.value = '';
+  prefixInput.value='';
+
+  shellHint.textContent = 'Type n values (e.g., 1,2,3) to see shell names and atom counts here…';
+  atomsSummary.textContent = 'Type n values (e.g., 1,2,3) to see shell names and atom counts here…';
+  progressEl.textContent = '';
+  downloadXYZBtn.disabled = true;
+  downloadCIFBtn.disabled = true;
+  exportLAMMPSBtn.disabled = true;
+
+  [shellStatus, seedStatus, vacStatus, bondStatus, refStatus, nrefStatus, alphaStatus, finalStatus].forEach(el=>{
+    el.hidden = true;
+    el.textContent = '';
+  });
+
+  histCtx.clearRect(0,0,histCanvas.width, histCanvas.height);
+  document.getElementById('histHint').textContent = 'Generate the structure to populate the histogram and inspector.';
+  nnMinEl.textContent='—'; nnMeanEl.textContent='—'; nnMaxEl.textContent='—';
+  updateWebGLPreview([]);
+  glLegend.innerHTML = '<div class="help">Legend will appear once you enter n values.</div>';
+  refMetricsEl.textContent = 'Upload a file to see its atom count and measured radius.';
+  lastAtoms=null; lastMeta=''; lastPrefix=''; lastNN={d1:null,d2:null,d3:null}; lastShellsData=[];
+});
+
+shellInput.addEventListener('input', updateAll);
+modeSel.addEventListener('change', updateAll);
+seedInput.addEventListener('input', validateSeed);
+vacInput.addEventListener('input', ()=>{ validateVac(); });
+bondInput.addEventListener('input', ()=>{ validateBond(); });
+refInput.addEventListener('change', updateAll);
+nrefInput.addEventListener('input', updateAll);
+alphaInput.addEventListener('input', ()=>{ validateAlphaOptional(); });
+
+shellFilter.addEventListener('change', ()=>{
+  updateWebGLPreview(lastShellsData);
+});
+
+/* Init */
+initGL();
+validateShells();
+</script>
+</body>
+</html>
