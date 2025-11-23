@@ -1,0 +1,1079 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CNO Generator - Complete Tutorial</title>
+<style>
+  :root{
+    --bg:#ffffff; --text:#1f2937; --muted:#64748b;
+    --primary:#0b72d9; --primary-dark:#0857a3;
+    --ok:#0e8f53; --warn:#d97706; --error:#b91c1c;
+    --border:#e5e7eb;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  }
+  
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  
+  body {
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+    color: var(--text);
+    line-height: 1.7;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    padding: 40px 20px;
+  }
+  
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    overflow: hidden;
+  }
+  
+  .hero {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 60px 40px;
+    text-align: center;
+  }
+  
+  .hero h1 {
+    font-size: 2.5rem;
+    margin-bottom: 12px;
+    font-weight: 700;
+  }
+  
+  .hero p {
+    font-size: 1.2rem;
+    opacity: 0.95;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  
+  .back-btn {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 12px 24px;
+    background: rgba(255,255,255,0.2);
+    color: white;
+    text-decoration: none;
+    border-radius: 10px;
+    border: 2px solid rgba(255,255,255,0.3);
+    font-weight: 600;
+    transition: all 0.3s ease;
+  }
+  
+  .back-btn:hover {
+    background: rgba(255,255,255,0.3);
+    transform: translateY(-2px);
+  }
+  
+  .content {
+    padding: 50px 40px;
+  }
+  
+  .toc {
+    background: #f8fbff;
+    border: 2px solid #e0e7ff;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 40px;
+  }
+  
+  .toc h2 {
+    color: var(--primary);
+    margin-bottom: 16px;
+    font-size: 1.3rem;
+  }
+  
+  .toc ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .toc li {
+    margin: 8px 0;
+  }
+  
+  .toc a {
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s;
+  }
+  
+  .toc a:hover {
+    color: var(--primary-dark);
+    text-decoration: underline;
+  }
+  
+  .section {
+    margin-bottom: 50px;
+    scroll-margin-top: 20px;
+  }
+  
+  .section h2 {
+    color: var(--primary);
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 3px solid #e0e7ff;
+  }
+  
+  .section h3 {
+    color: #475569;
+    font-size: 1.3rem;
+    margin: 24px 0 12px 0;
+  }
+  
+  .section p {
+    margin-bottom: 16px;
+    color: #475569;
+  }
+  
+  .section ul, .section ol {
+    margin: 16px 0;
+    padding-left: 28px;
+    color: #475569;
+  }
+  
+  .section li {
+    margin: 10px 0;
+  }
+  
+  .param-box {
+    background: #f8fbff;
+    border: 2px solid #e0e7ff;
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin: 16px 0;
+    font-family: var(--mono);
+    font-size: 0.95rem;
+  }
+  
+  .param-box strong {
+    color: var(--primary);
+    font-size: 1rem;
+  }
+  
+  .tip-box {
+    background: #fff7ed;
+    border-left: 5px solid var(--warn);
+    padding: 16px 20px;
+    margin: 20px 0;
+    border-radius: 8px;
+  }
+  
+  .tip-box::before {
+    content: '💡 Pro Tip: ';
+    font-weight: 700;
+    color: var(--warn);
+  }
+  
+  .example-box {
+    background: #e7f6ee;
+    border-left: 5px solid var(--ok);
+    padding: 16px 20px;
+    margin: 20px 0;
+    border-radius: 8px;
+  }
+  
+  .example-box::before {
+    content: '✓ Example: ';
+    font-weight: 700;
+    color: var(--ok);
+    display: block;
+    margin-bottom: 8px;
+  }
+  
+  .warning-box {
+    background: #fee2e2;
+    border-left: 5px solid var(--error);
+    padding: 16px 20px;
+    margin: 20px 0;
+    border-radius: 8px;
+  }
+  
+  .warning-box::before {
+    content: '⚠️ Important: ';
+    font-weight: 700;
+    color: var(--error);
+  }
+  
+  code {
+    background: #f1f5f9;
+    padding: 3px 8px;
+    border-radius: 5px;
+    font-family: var(--mono);
+    font-size: 0.9em;
+    color: #0f172a;
+  }
+  
+  pre {
+    background: #0f172a;
+    color: #e2e8f0;
+    padding: 20px;
+    border-radius: 10px;
+    overflow-x: auto;
+    margin: 20px 0;
+    font-family: var(--mono);
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+  
+  .formula {
+    text-align: center;
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--primary);
+    margin: 20px 0;
+    padding: 16px;
+    background: #f8fbff;
+    border-radius: 10px;
+  }
+  
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+  }
+  
+  th, td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  
+  th {
+    background: #f8fbff;
+    color: var(--primary);
+    font-weight: 600;
+  }
+  
+  tr:hover {
+    background: #fafcff;
+  }
+  
+  .step-number {
+    display: inline-block;
+    width: 32px;
+    height: 32px;
+    background: var(--primary);
+    color: white;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 32px;
+    font-weight: 700;
+    margin-right: 12px;
+  }
+  
+  .footer {
+    background: #f8fafc;
+    padding: 30px 40px;
+    text-align: center;
+    color: var(--muted);
+    border-top: 1px solid var(--border);
+  }
+  
+  @media (max-width: 768px) {
+    .hero h1 { font-size: 2rem; }
+    .content { padding: 30px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="hero">
+    <h1>🔬 Carbon Nano-Onion Generator</h1>
+    <p>Complete Tutorial & Parameter Guide</p>
+    <a href="cno-generator.html" class="back-btn">← Back to Generator</a>
+  </div>
+  
+  <div class="content">
+    
+    <!-- Table of Contents -->
+    <div class="toc">
+      <h2>📑 Table of Contents</h2>
+      <ul>
+        <li><a href="#introduction">1. Introduction to Carbon Nano-Onions</a></li>
+        <li><a href="#getting-started">2. Getting Started</a></li>
+        <li><a href="#parameters">3. Parameter Reference</a></li>
+        <li><a href="#visualization">4. Visualization & Analysis</a></li>
+        <li><a href="#export">5. Export Formats</a></li>
+        <li><a href="#examples">6. Example Workflows</a></li>
+        <li><a href="#troubleshooting">7. Troubleshooting</a></li>
+      </ul>
+    </div>
+    
+    <!-- Section 1: Introduction -->
+    <div class="section" id="introduction">
+      <h2>1. Introduction to Carbon Nano-Onions</h2>
+      
+      <p>Carbon nano-onions (CNOs) are spherical nanostructures composed of concentric fullerene shells. Think of them as Russian nesting dolls made of carbon atoms, where each layer is a fullerene cage nested inside another.</p>
+      
+      <h3>What are Fullerenes?</h3>
+      <p>Fullerenes are molecules made entirely of carbon atoms arranged in a hollow sphere, ellipsoid, or tube. The most famous fullerene is C60 (buckminsterfullerene), which has 60 carbon atoms arranged in a soccer ball pattern with 12 pentagons and 20 hexagons.</p>
+      
+      <h3>Structure Formula</h3>
+      <div class="formula">
+        Number of atoms = 60 × n²
+      </div>
+      
+      <p>Where <strong>n</strong> is the shell order (a positive integer):</p>
+      
+      <table>
+        <thead>
+          <tr>
+            <th>Shell Order (n)</th>
+            <th>Formula</th>
+            <th>Atom Count</th>
+            <th>Common Name</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td>60 × 1² = 60</td>
+            <td>60</td>
+            <td>C60 (Buckminsterfullerene)</td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>60 × 2² = 240</td>
+            <td>240</td>
+            <td>C240</td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td>60 × 3² = 540</td>
+            <td>540</td>
+            <td>C540</td>
+          </tr>
+          <tr>
+            <td>4</td>
+            <td>60 × 4² = 960</td>
+            <td>960</td>
+            <td>C960</td>
+          </tr>
+          <tr>
+            <td>5</td>
+            <td>60 × 5² = 1500</td>
+            <td>1500</td>
+            <td>C1500</td>
+          </tr>
+        </tbody>
+      </table>
+      
+      <h3>Construction Methods</h3>
+      <p>This tool uses two algorithms:</p>
+      
+      <p><strong>Goldberg-Coxeter (GC) Construction:</strong> A mathematical method for systematically creating icosahedral fullerenes. It places vertices on a sphere following specific symmetry rules.</p>
+      
+      <p><strong>Fibonacci-Guided Bonds:</strong> An enhancement that uses Fibonacci spiral distribution to guide bond formation, resulting in more uniform bond lengths and improved structural quality. This is the recommended method for research applications.</p>
+      
+      <div class="tip-box">
+        For most research purposes, use the "GC + Fibonacci Bonds" mode. It produces structures with more realistic geometries suitable for molecular dynamics simulations.
+      </div>
+    </div>
+    
+    <!-- Section 2: Getting Started -->
+    <div class="section" id="getting-started">
+      <h2>2. Getting Started</h2>
+      
+      <h3>Quick Start (3 Minutes)</h3>
+      
+      <ol>
+        <li>
+          <span class="step-number">1</span>
+          <strong>Enter Shell Orders:</strong> Type comma-separated integers (e.g., <code>1,2,3</code>)
+        </li>
+        <li>
+          <span class="step-number">2</span>
+          <strong>Select Mode:</strong> Choose "GC + Fibonacci Bonds" for better quality
+        </li>
+        <li>
+          <span class="step-number">3</span>
+          <strong>Set Alpha:</strong> Enter <code>3.54</code> (typical carbon spacing)
+        </li>
+        <li>
+          <span class="step-number">4</span>
+          <strong>Add Vacuum Padding:</strong> Enter <code>10</code> Ångströms for simulations
+        </li>
+        <li>
+          <span class="step-number">5</span>
+          <strong>Click Generate:</strong> Wait for the structure to build (usually 5-30 seconds)
+        </li>
+        <li>
+          <span class="step-number">6</span>
+          <strong>Explore Visualization:</strong> Rotate, zoom, and analyze the structure
+        </li>
+        <li>
+          <span class="step-number">7</span>
+          <strong>Download Files:</strong> Export in your preferred format (XYZ/CIF/LAMMPS)
+        </li>
+      </ol>
+      
+      <div class="example-box">
+        First-time users: Try entering <code>1,2</code> for shell orders and <code>3.54</code> for alpha. This creates a simple 2-shell onion (C60 inside C240) that generates quickly and is easy to visualize.
+      </div>
+    </div>
+    
+    <!-- Section 3: Parameters -->
+    <div class="section" id="parameters">
+      <h2>3. Parameter Reference</h2>
+      
+      <h3>Shell Orders (n values)</h3>
+      <div class="param-box">
+        <strong>Required:</strong> Yes<br>
+        <strong>Format:</strong> Comma-separated positive integers<br>
+        <strong>Example:</strong> 1,2,3 or 2,3,4
+      </div>
+      
+      <p>Defines which fullerene shells to include in your nano-onion. Each integer creates a shell with 60 × n² atoms.</p>
+      
+      <p><strong>Rules:</strong></p>
+      <ul>
+        <li>Must be positive integers (1, 2, 3, 4, ...)</li>
+        <li>No duplicates allowed</li>
+        <li>Order doesn't matter (the tool automatically sorts them)</li>
+        <li>Larger values = bigger shells with more atoms</li>
+      </ul>
+      
+      <div class="warning-box">
+        Large structures (n > 10) can take several minutes to generate and may be slow to visualize. Start with smaller values (n ≤ 5) for testing.
+      </div>
+      
+      <h3>Mode</h3>
+      <div class="param-box">
+        <strong>Required:</strong> Yes<br>
+        <strong>Options:</strong> "Goldberg-Coxeter (n,0)" or "GC + Fibonacci Bonds"<br>
+        <strong>Recommended:</strong> GC + Fibonacci Bonds
+      </div>
+      
+      <p><strong>Goldberg-Coxeter (n,0):</strong> Standard icosahedral construction. Fast but produces less uniform bond lengths.</p>
+      
+      <p><strong>GC + Fibonacci Bonds:</strong> Enhanced algorithm that uses Fibonacci sphere distribution to guide bond formation. Results in:</p>
+      <ul>
+        <li>More uniform bond length distribution</li>
+        <li>Better suited for molecular dynamics</li>
+        <li>More realistic fullerene geometries</li>
+        <li>Slightly slower generation time</li>
+      </ul>
+      
+      <h3>Random Seed</h3>
+      <div class="param-box">
+        <strong>Required:</strong> No (optional)<br>
+        <strong>Format:</strong> Integer<br>
+        <strong>Example:</strong> 42, 12345, 987654
+      </div>
+      
+      <p>Seeds the random number generator for reproducible results. Using the same seed with identical parameters guarantees the exact same structure.</p>
+      
+      <p><strong>When to use:</strong></p>
+      <ul>
+        <li>Publishing research (include seed in methods for reproducibility)</li>
+        <li>Comparing different parameter sets</li>
+        <li>Debugging or testing</li>
+      </ul>
+      
+      <p><strong>When to leave blank:</strong></p>
+      <ul>
+        <li>Exploring different structural variations</li>
+        <li>Initial testing and prototyping</li>
+      </ul>
+      
+      <h3>Vacuum Padding (Å)</h3>
+      <div class="param-box">
+        <strong>Required:</strong> No (optional, default: 0)<br>
+        <strong>Format:</strong> Number ≥ 0<br>
+        <strong>Typical Range:</strong> 10-20 Å<br>
+        <strong>Example:</strong> 10.0
+      </div>
+      
+      <p>Adds empty space around the structure in exported coordinate files. This is crucial for periodic boundary condition simulations.</p>
+      
+      <p><strong>Why it matters:</strong></p>
+      <ul>
+        <li>Prevents artificial interactions between periodic images</li>
+        <li>Allows proper solvation shell formation in explicit solvent simulations</li>
+        <li>Reduces edge effects in finite-temperature simulations</li>
+      </ul>
+      
+      <p><strong>Recommended values:</strong></p>
+      <ul>
+        <li><strong>10-15 Å:</strong> Gas phase or implicit solvent MD</li>
+        <li><strong>15-20 Å:</strong> Explicit solvent simulations</li>
+        <li><strong>0 Å:</strong> Visualization only, no simulations planned</li>
+      </ul>
+      
+      <h3>Bond Scale</h3>
+      <div class="param-box">
+        <strong>Required:</strong> No (default: 1.00)<br>
+        <strong>Format:</strong> Number > 0<br>
+        <strong>Typical Range:</strong> 0.8-1.2<br>
+        <strong>Example:</strong> 1.00
+      </div>
+      
+      <p>Controls the strength of bond regularization during structure optimization. Higher values push bonds closer to the ideal sp² carbon-carbon distance (~1.42 Å).</p>
+      
+      <p><strong>Effect on structure:</strong></p>
+      <ul>
+        <li><strong>0.8-0.95:</strong> Softer constraints, more geometric flexibility, slightly irregular bonds</li>
+        <li><strong>1.00:</strong> Balanced (recommended default)</li>
+        <li><strong>1.05-1.2:</strong> Stricter regularization, more uniform bonds, less geometric freedom</li>
+      </ul>
+      
+      <div class="tip-box">
+        Start with 1.00. Only adjust if bond-length histogram shows poor distribution. Most users never need to change this parameter.
+      </div>
+      
+      <h3>Reference Shell File</h3>
+      <div class="param-box">
+        <strong>Required:</strong> No (optional)<br>
+        <strong>Format:</strong> Plain text file with "C x y z" lines<br>
+        <strong>Example:</strong> optimized_c240.xyz
+      </div>
+      
+      <p>Upload a previously optimized fullerene structure to automatically calibrate the α (alpha) parameter. The tool measures the radius of your reference and scales all shells proportionally.</p>
+      
+      <p><strong>Use cases:</strong></p>
+      <ul>
+        <li>You have DFT-optimized fullerene structures</li>
+        <li>Matching experimental or literature structures</li>
+        <li>Ensuring consistency across multiple CNO variants</li>
+      </ul>
+      
+      <p><strong>File format:</strong></p>
+      <pre>C 0.000000 0.000000 1.420000
+C 1.229321 0.000000 0.710000
+C 0.614661 1.064638 0.710000
+C -0.614661 1.064638 0.710000
+...</pre>
+      
+      <p>Each line must start with "C" followed by x, y, z coordinates in Ångströms.</p>
+      
+      <div class="warning-box">
+        When using a reference file, you MUST also specify "Reference Shell n_ref" to indicate which shell your reference corresponds to.
+      </div>
+      
+      <h3>Reference Shell n_ref</h3>
+      <div class="param-box">
+        <strong>Required:</strong> Only if using Reference Shell File<br>
+        <strong>Format:</strong> Integer matching one of your shell orders<br>
+        <strong>Example:</strong> 2 (if reference is C240)
+      </div>
+      
+      <p>Tells the tool which shell your reference file represents. For example:</p>
+      <ul>
+        <li>If your reference has 60 atoms (C60), set n_ref = 1</li>
+        <li>If your reference has 240 atoms (C240), set n_ref = 2</li>
+        <li>If your reference has 540 atoms (C540), set n_ref = 3</li>
+      </ul>
+      
+      <p>The tool will:</p>
+      <ol>
+        <li>Measure the mean radius of your reference structure</li>
+        <li>Calculate α = measured_radius / n_ref</li>
+        <li>Use this α to scale all other shells proportionally</li>
+      </ol>
+      
+      <h3>Alpha (Å)</h3>
+      <div class="param-box">
+        <strong>Required:</strong> Yes (unless using Reference File)<br>
+        <strong>Format:</strong> Number > 0<br>
+        <strong>Typical Range:</strong> 3.4-3.7 Å<br>
+        <strong>Recommended:</strong> 3.54 Å
+      </div>
+      
+      <p>The scaling factor that determines shell radii. Each shell's radius is approximately α × n.</p>
+      
+      <p><strong>Physical meaning:</strong> α roughly corresponds to the radial distance per shell order, related to the inter-shell spacing and carbon-carbon bond length.</p>
+      
+      <p><strong>Common values:</strong></p>
+      <ul>
+        <li><strong>3.45 Å:</strong> Tighter packing, shells closer together</li>
+        <li><strong>3.54 Å:</strong> Standard value, well-balanced (recommended)</li>
+        <li><strong>3.65 Å:</strong> Looser packing, more inter-shell space</li>
+      </ul>
+      
+      <div class="tip-box">
+        If you upload a reference file and leave α blank, it will be automatically calculated. This is the most accurate way to set α for structures matching literature or experimental data.
+      </div>
+      
+      <h3>Output Prefix</h3>
+      <div class="param-box">
+        <strong>Required:</strong> No (auto-generated if blank)<br>
+        <strong>Format:</strong> Text string<br>
+        <strong>Example:</strong> my_cno, onion_123, test_structure
+      </div>
+      
+      <p>Sets the base filename for all exported files. If you enter "my_cno", you'll get:</p>
+      <ul>
+        <li><code>my_cno.xyz</code> - XYZ coordinate file</li>
+        <li><code>my_cno.cif</code> - CIF crystallographic file</li>
+        <li><code>my_cno.data</code> - LAMMPS data file</li>
+        <li><code>in.my_cno</code> - LAMMPS input script</li>
+      </ul>
+      
+      <p>If left blank, the tool auto-generates a descriptive name like <code>onion_1_2_3</code> based on your shell orders.</p>
+    </div>
+    
+    <!-- Section 4: Visualization -->
+    <div class="section" id="visualization">
+      <h2>4. Visualization & Analysis</h2>
+      
+      <h3>3D Viewers</h3>
+      <p>The tool provides two complementary 3D visualizations:</p>
+      
+      <p><strong>WebGL Viewer (Top):</strong> Custom-built renderer showing atoms as colored balls and bonds as lines. Fast and responsive for real-time interaction.</p>
+      
+      <p><strong>Crystal Toolkit Viewer (Bottom):</strong> Professional-grade molecular visualization using Materials Project's library. Provides advanced rendering with lighting and materials.</p>
+      
+      <h3>Mouse Controls</h3>
+      <ul>
+        <li><strong>Left-click + drag:</strong> Rotate structure in 3D</li>
+        <li><strong>Scroll wheel:</strong> Zoom in/out</li>
+        <li><strong>Double-click (Crystal Toolkit):</strong> Reset view to default</li>
+      </ul>
+      
+      <h3>Display Options</h3>
+      <p><strong>Show bonds:</strong> Toggle chemical bond lines between carbon atoms. Useful for analyzing connectivity and identifying defects.</p>
+      
+      <p><strong>Show axes:</strong> Display X/Y/Z coordinate axes for orientation. Red = X, Green = Y, Blue = Z.</p>
+      
+      <p><strong>Shell view dropdown:</strong> Filter visualization to show:</p>
+      <ul>
+        <li><strong>All shells:</strong> Complete nano-onion structure</li>
+        <li><strong>Individual shells:</strong> Isolate specific shells (e.g., only C60, only C240)</li>
+      </ul>
+      
+      <h3>Color Legend</h3>
+      <p>Each shell is assigned a unique color (blue → purple gradient). Click legend items to quickly filter to that shell.</p>
+      
+      <h3>Bond-Length Histogram</h3>
+      <p>Displays the distribution of distances to nearest neighbors. This is crucial for quality assessment:</p>
+      
+      <p><strong>1st Nearest Neighbors (1st NN):</strong></p>
+      <ul>
+        <li>Direct chemical bonds</li>
+        <li>Should peak around 1.42 Å for sp² carbon</li>
+        <li>Narrow distribution indicates uniform bond lengths</li>
+      </ul>
+      
+      <p><strong>2nd Nearest Neighbors (2nd NN):</strong></p>
+      <ul>
+        <li>Atoms across hexagon edges</li>
+        <li>Typically ~2.4-2.5 Å</li>
+        <li>Helps identify hexagon/pentagon regularity</li>
+      </ul>
+      
+      <p><strong>3rd Nearest Neighbors (3rd NN):</strong></p>
+      <ul>
+        <li>Further structural correlations</li>
+        <li>Useful for analyzing long-range order</li>
+      </ul>
+      
+      <h3>NN Inspector Metrics</h3>
+      <p>Displays min/mean/max values for the selected neighbor order:</p>
+      
+      <p><strong>Good quality indicators:</strong></p>
+      <ul>
+        <li>1st NN mean close to 1.42 Å (±0.05 Å)</li>
+        <li>Narrow distribution (max - min < 0.2 Å for 1st NN)</li>
+        <li>Symmetric histogram shape</li>
+      </ul>
+      
+      <div class="tip-box">
+        If your 1st NN histogram shows multiple peaks or very wide distribution, try adjusting Bond Scale or using Fibonacci mode for better regularization.
+      </div>
+    </div>
+    
+    <!-- Section 5: Export -->
+    <div class="section" id="export">
+      <h2>5. Export Formats</h2>
+      
+      <h3>XYZ Format</h3>
+      <p><strong>Use for:</strong> General molecular visualization, quick analysis</p>
+      <p><strong>Compatible with:</strong> VMD, Avogadro, PyMOL, Jmol, most molecular viewers</p>
+      
+      <p><strong>File structure:</strong></p>
+      <pre>[number of atoms]
+[comment line with metadata]
+C  x1  y1  z1
+C  x2  y2  z2
+...</pre>
+      
+      <p><strong>Advantages:</strong></p>
+      <ul>
+        <li>Simple, human-readable format</li>
+        <li>Universal compatibility</li>
+        <li>Small file size</li>
+      </ul>
+      
+      <h3>CIF Format (Crystallographic Information File)</h3>
+      <p><strong>Use for:</strong> Crystallographic databases, materials science applications</p>
+      <p><strong>Compatible with:</strong> Materials Project, COD, VESTA, Mercury, CrystalMaker</p>
+      
+      <p><strong>Features:</strong></p>
+      <ul>
+        <li>Includes lattice parameters</li>
+        <li>Fractional coordinates</li>
+        <li>Symmetry information</li>
+        <li>Database-ready format</li>
+      </ul>
+      
+      <p><strong>Advantages:</strong></p>
+      <ul>
+        <li>Standard in materials science</li>
+        <li>Preserves unit cell information</li>
+        <li>Suitable for publication and archiving</li>
+      </ul>
+      
+      <h3>LAMMPS Format</h3>
+      <p><strong>Use for:</strong> Molecular dynamics simulations</p>
+      <p><strong>Compatible with:</strong> LAMMPS molecular dynamics package</p>
+      
+      <p><strong>Files generated:</strong></p>
+      <ol>
+        <li><code>prefix.data</code> - LAMMPS data file with atomic coordinates and topology</li>
+        <li><code>in.prefix</code> - Ready-to-run LAMMPS input script</li>
+      </ol>
+      
+      <p><strong>Included in input script:</strong></p>
+      <ul>
+        <li>AIREBO potential for carbon (accurate for sp² systems)</li>
+        <li>Initial thermalization at 5 K</li>
+        <li>5000-step MD equilibration</li>
+        <li>Conjugate gradient energy minimization</li>
+        <li>Output of relaxed structure</li>
+      </ul>
+      
+      <p><strong>To run simulation:</strong></p>
+      <pre>lmp -in in.my_cno</pre>
+      
+      <div class="tip-box">
+        The provided LAMMPS script is a starting template. Adjust temperature, timestep, and run length based on your specific research needs. Always test with short runs first.
+      </div>
+      
+      <h3>Which Format Should I Use?</h3>
+      
+      <table>
+        <thead>
+          <tr>
+            <th>Purpose</th>
+            <th>Recommended Format</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Quick visualization</td>
+            <td>XYZ</td>
+          </tr>
+          <tr>
+            <td>Molecular dynamics</td>
+            <td>LAMMPS</td>
+          </tr>
+          <tr>
+            <td>Database submission</td>
+            <td>CIF</td>
+          </tr>
+          <tr>
+            <td>Materials science analysis</td>
+            <td>CIF</td>
+          </tr>
+          <tr>
+            <td>Quantum chemistry (Gaussian, ORCA)</td>
+            <td>XYZ (then convert)</td>
+          </tr>
+          <tr>
+            <td>Publication supplement</td>
+            <td>XYZ + CIF</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    
+    <!-- Section 6: Examples -->
+    <div class="section" id="examples">
+      <h2>6. Example Workflows</h2>
+      
+      <h3>Example 1: Basic 3-Shell Nano-Onion</h3>
+      <p><strong>Goal:</strong> Create a standard C60@C240@C540 nano-onion for visualization</p>
+      
+      <p><strong>Parameters:</strong></p>
+      <ul>
+        <li>Shell Orders: <code>1,2,3</code></li>
+        <li>Mode: <code>GC + Fibonacci Bonds</code></li>
+        <li>Alpha: <code>3.54</code></li>
+        <li>Bond Scale: <code>1.00</code></li>
+        <li>Vacuum Padding: <code>0</code> (visualization only)</li>
+      </ul>
+      
+      <p><strong>Result:</strong> 840 atoms (60 + 240 + 540) in ~10 seconds</p>
+      
+      <div class="example-box">
+        This is the recommended starting configuration for first-time users. It generates quickly and produces a clean, easy-to-visualize structure.
+      </div>
+      
+      <h3>Example 2: MD Simulation Preparation</h3>
+      <p><strong>Goal:</strong> Prepare a CNO for LAMMPS molecular dynamics at finite temperature</p>
+      
+      <p><strong>Parameters:</strong></p>
+      <ul>
+        <li>Shell Orders: <code>2,3,4</code></li>
+        <li>Mode: <code>GC + Fibonacci Bonds</code></li>
+        <li>Alpha: <code>3.54</code></li>
+        <li>Bond Scale: <code>1.00</code></li>
+        <li>Vacuum Padding: <code>15.0</code></li>
+        <li>Random Seed: <code>42</code> (for reproducibility)</li>
+        <li>Output Prefix: <code>cno_234_md</code></li>
+      </ul>
+      
+      <p><strong>Workflow:</strong></p>
+      <ol>
+        <li>Generate structure with above parameters</li>
+        <li>Download LAMMPS format</li>
+        <li>Modify <code>in.cno_234_md</code> to set desired temperature and run time</li>
+        <li>Run: <code>lmp -in in.cno_234_md</code></li>
+        <li>Analyze trajectory with OVITO or VMD</li>
+      </ol>
+      
+      <h3>Example 3: Reference-Based Generation</h3>
+      <p><strong>Goal:</strong> Create CNO matching a DFT-optimized C240 reference structure</p>
+      
+      <p><strong>Steps:</strong></p>
+      <ol>
+        <li>Optimize C240 with DFT (Gaussian, ORCA, VASP, etc.)</li>
+        <li>Export optimized geometry as XYZ format</li>
+        <li>In CNO Generator:
+          <ul>
+            <li>Shell Orders: <code>1,2,3,4</code></li>
+            <li>Mode: <code>GC + Fibonacci Bonds</code></li>
+            <li>Reference File: Upload your optimized C240 XYZ</li>
+            <li>Reference n_ref: <code>2</code></li>
+            <li>Alpha: <em>leave blank</em> (auto-calculated)</li>
+            <li>Vacuum Padding: <code>10.0</code></li>
+          </ul>
+        </li>
+        <li>Generate structure</li>
+      </ol>
+      
+      <p><strong>Result:</strong> All shells scaled to match your reference structure's dimensions</p>
+      
+      <div class="tip-box">
+        This approach ensures consistency when comparing computational results across different CNO sizes. The reference-based α ensures all shells use the same radial scaling.
+      </div>
+      
+      <h3>Example 4: Large Structure for Visualization</h3>
+      <p><strong>Goal:</strong> Create an impressive 5-shell nano-onion for presentations</p>
+      
+      <p><strong>Parameters:</strong></p>
+      <ul>
+        <li>Shell Orders: <code>1,2,3,4,5</code></li>
+        <li>Mode: <code>GC + Fibonacci Bonds</code></li>
+        <li>Alpha: <code>3.54</code></li>
+        <li>Bond Scale: <code>1.05</code> (slightly tighter bonds)</li>
+        <li>Vacuum Padding: <code>0</code></li>
+      </ul>
+      
+      <p><strong>Result:</strong> 3,300 atoms total (60 + 240 + 540 + 960 + 1500)</p>
+      
+      <div class="warning-box">
+        Generation time: 1-3 minutes. Visualization may be slow on older hardware. Use shell filtering to view individual layers for better performance.
+      </div>
+      
+      <h3>Example 5: Bond Quality Optimization</h3>
+      <p><strong>Goal:</strong> Fine-tune bond uniformity for critical applications</p>
+      
+      <p><strong>Iterative approach:</strong></p>
+      <ol>
+        <li>Generate with default Bond Scale (1.00)</li>
+        <li>Check 1st NN histogram - note distribution width</li>
+        <li>If bonds too irregular (range > 0.15 Å):
+          <ul>
+            <li>Increase Bond Scale to 1.10</li>
+            <li>Regenerate and compare histogram</li>
+          </ul>
+        </li>
+        <li>If bonds too constrained (mean drifts from 1.42 Å):
+          <ul>
+            <li>Decrease Bond Scale to 0.95</li>
+            <li>Regenerate and compare</li>
+          </ul>
+        </li>
+        <li>Iterate until satisfied with bond distribution</li>
+      </ol>
+      
+      <p><strong>Target metrics:</strong></p>
+      <ul>
+        <li>1st NN mean: 1.40-1.44 Å</li>
+        <li>1st NN range (max - min): < 0.12 Å</li>
+        <li>Histogram shape: Single narrow peak</li>
+      </ul>
+    </div>
+    
+    <!-- Section 7: Troubleshooting -->
+    <div class="section" id="troubleshooting">
+      <h2>7. Troubleshooting</h2>
+      
+      <h3>Problem: "Shell list looks good" but Generate button doesn't work</h3>
+      <p><strong>Solution:</strong></p>
+      <ul>
+        <li>Check that all parameters are valid (look for red error messages)</li>
+        <li>Ensure Alpha is set if not using a reference file</li>
+        <li>Verify Vacuum Padding and Bond Scale are positive numbers</li>
+      </ul>
+      
+      <h3>Problem: Generation takes too long / browser freezes</h3>
+      <p><strong>Causes:</strong></p>
+      <ul>
+        <li>Too many shells or very large n values (n > 10)</li>
+        <li>Older/slower hardware</li>
+      </ul>
+      
+      <p><strong>Solutions:</strong></p>
+      <ul>
+        <li>Start with fewer, smaller shells (e.g., 1,2,3)</li>
+        <li>Use standard GC mode instead of Fibonacci (faster but lower quality)</li>
+        <li>Close other browser tabs to free memory</li>
+        <li>Be patient - structures with 5000+ atoms can take 2-5 minutes</li>
+      </ul>
+      
+      <h3>Problem: Bond histogram shows multiple peaks</h3>
+      <p><strong>Causes:</strong></p>
+      <ul>
+        <li>Bond Scale too low, allowing irregular geometry</li>
+        <li>Very large shells with difficult topology</li>
+      </ul>
+      
+      <p><strong>Solutions:</strong></p>
+      <ul>
+        <li>Increase Bond Scale to 1.10-1.15</li>
+        <li>Switch to Fibonacci mode if using standard GC</li>
+        <li>Try different Random Seed values</li>
+      </ul>
+      
+      <h3>Problem: Crystal Toolkit viewer not showing structure</h3>
+      <p><strong>Solutions:</strong></p>
+      <ul>
+        <li>Refresh the page and regenerate</li>
+        <li>Check browser console for errors (F12)</li>
+        <li>The WebGL viewer should still work - use that instead</li>
+        <li>Try a different browser (Chrome/Firefox recommended)</li>
+      </ul>
+      
+      <h3>Problem: Reference file upload fails</h3>
+      <p><strong>Common issues:</strong></p>
+      <ul>
+        <li><strong>"No C x y z lines found"</strong> - File format incorrect. Ensure each line starts with "C" followed by three numbers</li>
+        <li><strong>n_ref doesn't match shells</strong> - Your reference must correspond to one of your shell orders</li>
+        <li><strong>File too large</strong> - References should be single shells, not complete CNOs</li>
+      </ul>
+      
+      <p><strong>Valid reference line examples:</strong></p>
+      <pre>C 0.000 0.000 1.420
+C  1.229  0.000  0.710
+C    0.615    1.065    0.710</pre>
+      
+      <h3>Problem: LAMMPS simulation fails immediately</h3>
+      <p><strong>Solutions:</strong></p>
+      <ul>
+        <li>Ensure AIREBO potential file (CH.airebo-m) is in same directory</li>
+        <li>Check that LAMMPS is compiled with MANYBODY and MOLECULE packages</li>
+        <li>Verify file paths in input script are correct</li>
+        <li>Try running with fewer timesteps first (change "run 5000" to "run 100")</li>
+      </ul>
+      
+      <h3>Problem: Visualization is laggy/slow</h3>
+      <p><strong>Solutions:</strong></p>
+      <ul>
+        <li>Uncheck "Show bonds" to reduce rendering load</li>
+        <li>Use shell filtering to view one shell at a time</li>
+        <li>Generate smaller structures for testing</li>
+        <li>Close other applications to free GPU/memory</li>
+      </ul>
+      
+      <h3>Problem: Downloaded file won't open in my software</h3>
+      <p><strong>Format-specific solutions:</strong></p>
+      
+      <p><strong>XYZ files:</strong></p>
+      <ul>
+        <li>Try opening in text editor first to verify format</li>
+        <li>Some software requires .xyz extension - check filename</li>
+        <li>VMD: Use "New Molecule" → "Browse" → select file</li>
+        <li>Avogadro: File → Open → select XYZ from file type dropdown</li>
+      </ul>
+      
+      <p><strong>CIF files:</strong></p>
+      <ul>
+        <li>VESTA: File → Open → select .cif file</li>
+        <li>Mercury: File → Open Structure → browse to .cif</li>
+        <li>Verify file isn't corrupted by opening in text editor</li>
+      </ul>
+      
+      <p><strong>LAMMPS files:</strong></p>
+      <ul>
+        <li>Both .data and in.* files must be in same directory</li>
+        <li>Check that paths in input script match your filenames</li>
+        <li>Ensure potential file is available</li>
+      </ul>
+      
+      <h3>Still Having Issues?</h3>
+      <p>If problems persist:</p>
+      <ol>
+        <li>Try the "Reset" button and start fresh</li>
+        <li>Test with the Example 1 workflow (known working configuration)</li>
+        <li>Clear browser cache and reload page</li>
+        <li>Try a different browser</li>
+        <li>Check browser console (F12) for error messages</li>
+      </ol>
+      
+      <div class="tip-box">
+        When reporting issues, include: browser version, shell orders used, all parameter values, and any error messages from console.
+      </div>
+    </div>
+    
+    <!-- Additional Resources -->
+    <div class="section">
+      <h2>📚 Additional Resources</h2>
+      
+      <h3>Recommended Reading</h3>
+      <ul>
+        <li><strong>Fullerene Chemistry:</strong> Understanding the fundamentals of C60 and related structures</li>
+        <li><strong>LAMMPS Documentation:</strong> <code>lammps.sandia.gov</code> for MD simulation details</li>
+        <li><strong>AIREBO Potential:</strong> Literature on reactive potentials for carbon systems</li>
+        <li><strong>Materials Project:</strong> <code>materialsproject.org</code> for crystal structure databases</li>
+      </ul>
+      
+      <h3>Visualization Software</h3>
+      <ul>
+        <li><strong>VMD (Visual Molecular Dynamics):</strong> Free, powerful molecular visualization</li>
+        <li><strong>Avogadro:</strong> Free molecular editor and visualizer</li>
+        <li><strong>OVITO:</strong> Particle visualization for MD trajectories</li>
+        <li><strong>VESTA:</strong> Crystal structure visualization and analysis</li>
+      </ul>
+      
+      <h3>Simulation Software</h3>
+      <ul>
+        <li><strong>LAMMPS:</strong> Classical molecular dynamics</li>
+        <li><strong>Gaussian/ORCA:</strong> Quantum chemistry DFT calculations</li>
+        <li><strong>VASP/Quantum ESPRESSO:</strong> Plane-wave DFT for periodic systems</li>
+      </ul>
+    </div>
+    
+  </div>
+  
+  <div class="footer">
+    <p><strong>Carbon Nano-Onion Generator</strong></p>
+    <p>Tutorial Version 1.0 | For research and educational purposes</p>
+    <p style="margin-top:12px;"><a href="cno-generator.html" style="color:#0b72d9; text-decoration:none; font-weight:600;">← Return to Generator</a></p>
+  </div>
+  
+</div>
+
+</body>
+</html>
