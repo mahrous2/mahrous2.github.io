@@ -37,24 +37,10 @@
   <!-- Outer shell (C540 - largest) -->
   <circle cx="100" cy="100" r="75" fill="none" stroke="url(#sphere3)" stroke-width="2.5" opacity="0.6" filter="url(#glow)"/>
   
-  <!-- Hexagonal pattern on outer shell -->
-  <g opacity="0.5">
-    <path d="M 100,25 L 115,35 L 115,55 L 100,65 L 85,55 L 85,35 Z" fill="none" stroke="#a78bfa" stroke-width="1.5"/>
-    <path d="M 175,100 L 165,115 L 145,115 L 135,100 L 145,85 L 165,85 Z" fill="none" stroke="#a78bfa" stroke-width="1.5"/>
-    <path d="M 25,100 L 35,115 L 55,115 L 65,100 L 55,85 L 35,85 Z" fill="none" stroke="#a78bfa" stroke-width="1.5"/>
-    <path d="M 100,175 L 85,165 L 85,145 L 100,135 L 115,145 L 115,165 Z" fill="none" stroke="#a78bfa" stroke-width="1.5"/>
-  </g>
-  
+   
   <!-- Middle shell (C240) -->
   <circle cx="100" cy="100" r="50" fill="none" stroke="url(#sphere2)" stroke-width="3" opacity="0.7" filter="url(#glow)"/>
-  
-  <!-- Hexagonal pattern on middle shell -->
-  <g opacity="0.6">
-    <path d="M 100,50 L 110,56 L 110,68 L 100,74 L 90,68 L 90,56 Z" fill="none" stroke="#818cf8" stroke-width="1.5"/>
-    <path d="M 150,100 L 144,110 L 132,110 L 126,100 L 132,90 L 144,90 Z" fill="none" stroke="#818cf8" stroke-width="1.5"/>
-    <path d="M 50,100 L 56,110 L 68,110 L 74,100 L 68,90 L 56,90 Z" fill="none" stroke="#818cf8" stroke-width="1.5"/>
-  </g>
-  
+    
   <!-- Inner shell (C60) -->
   <circle cx="100" cy="100" r="28" fill="none" stroke="url(#sphere1)" stroke-width="3.5" opacity="0.85" filter="url(#glow)"/>
   
@@ -73,14 +59,7 @@
   <!-- Core glow -->
   <circle cx="100" cy="100" r="12" fill="#3b82f6" opacity="0.3" filter="url(#glow)"/>
   <circle cx="100" cy="100" r="6" fill="#60a5fa" opacity="0.6"/>
-  
-  <!-- Bond lines connecting shells (to show nested structure) -->
-  <g opacity="0.3" stroke="#94a3b8" stroke-width="1">
-    <line x1="100" y1="72" x2="100" y2="50"/>
-    <line x1="119" y1="100" x2="150" y2="100"/>
-    <line x1="81" y1="100" x2="50" y2="100"/>
-    <line x1="100" y1="128" x2="100" y2="150"/>
-  </g>
+
   
   <!-- Label at bottom -->
   <text x="100" y="190" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#94a3b8" text-anchor="middle">CNO</text>
