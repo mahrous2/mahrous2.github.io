@@ -62,5 +62,5 @@
 
   
   <!-- Label at bottom -->
-  <text x="100" y="190" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#94a3b8" text-anchor="middle">CNO</text>
+  <text x="100" y="190" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#94a3b8" text-anchor="middle">CNO Generator</text>
 </svg>
