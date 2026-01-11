@@ -1,126 +1,273 @@
-<!DOCTYPE html>
-<html>
-      <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-12QDEJ1MTJ"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-12QDEJ1MTJ');
-</script>
-<head profile="http://www.w3.org/2005/10/profile">
-<link rel="icon" 
-      type="image/png" 
-      href="./img/favicon.webp">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Mohamed Mahrous – Resume</title>
-<link rel="stylesheet" href="./css/stylesheet.css">
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Mohamed Mahrous — Resume</title>
+  <style>
+    :root{
+      --text:#111;
+      --muted:#555;
+      --line:#e6e6e6;
+      --bg:#fff;
+      --accent:#0b5fff;
+    }
+    html,body{background:var(--bg); color:var(--text); font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; line-height:1.45; margin:0;}
+    .container{max-width:900px; margin:0 auto; padding:28px 18px 40px;}
+    header{border-bottom:1px solid var(--line); padding-bottom:14px; margin-bottom:18px;}
+    h1{font-size:28px; margin:0 0 6px;}
+    .contact{color:var(--muted); font-size:14px;}
+    .contact a{color:inherit; text-decoration:none;}
+    .contact a:hover{color:var(--accent); text-decoration:underline;}
+    section{margin:18px 0;}
+    h2{font-size:16px; letter-spacing:.06em; text-transform:uppercase; margin:0 0 10px;}
+    .item{padding:10px 0; border-top:1px solid var(--line);}
+    .item:first-of-type{border-top:0;}
+    .row{display:flex; gap:14px; flex-wrap:wrap; justify-content:space-between;}
+    .role{font-weight:700;}
+    .where{color:var(--muted);}
+    .when{color:var(--muted); white-space:nowrap;}
+    ul{margin:8px 0 0 18px; padding:0;}
+    li{margin:4px 0;}
+    .grid{display:grid; grid-template-columns: 180px 1fr; gap:10px 16px;}
+    .label{color:var(--muted);}
+    .pubs ol{margin:8px 0 0 18px; padding:0;}
+    .pubs li{margin:10px 0;}
+    .tagline{color:var(--muted); margin:0;}
+  </style>
 </head>
+
 <body>
+  <main class="container">
+    <header>
+      <h1>Mohamed Mahrous</h1>
+      <p class="tagline">PhD Candidate (Electrical &amp; Computer Engineering) — University of Toronto</p>
+      <div class="contact">
+        <div>Toronto, Canada (30 Charles Street West)</div>
+        <div>
+          <a href="tel:+14378387372">+1 (437) 838-7372</a>
+          &nbsp;|&nbsp;
+          <a href="mailto:mahrous.mohamed@mail.utoronto.ca">mahrous.mohamed@mail.utoronto.ca</a>
+        </div>
+      </div>
+    </header>
 
-    <div id="nav-placeholder"></div>
-    <script src="./js/nav-loader.js"></script>
+    <section>
+      <h2>Education</h2>
 
-<div class="main">
-  <h2>Mohamed Mahrous</h2>
-  <p>PhD Researcher in Electrical and Computer Engineering, University of Toronto</p>
-  <p>Email: mahrous.mohamed@mail.utoronto.ca | Toronto, Canada</p>
-  <br>
+      <div class="item">
+        <div class="row">
+          <div>
+            <div class="role">PhD, Electrical and Computer Engineering</div>
+            <div class="where">University of Toronto, Canada</div>
+          </div>
+          <div class="when">Jan 2024 – Dec 2027</div>
+        </div>
+      </div>
 
- <h3 class="resume_accent">Technical Skills</h3>
-<ul>
-  <li><b>Software & Tools:</b> Microsoft Office Suite; OVITO, OriginPro, VESTA, Avogadro, XCrySDen for materials visualization</li>
-  <li><b>Computational Modeling:</b> DFT, Molecular Dynamics (MD), Molecular Mechanics using Material Studio, GULP, Quantum ESPRESSO, LAMMPS, VASP</li>
-  <li><b>Programming:</b> Python and C (data processing, numerical simulations, automation)</li>
-  <li><b>Machine Learning:</b> Regression, classification, time series, clustering using Python (NumPy, TensorFlow, Pandas, Scikit-learn, Matplotlib)</li>
-  <li><b>Data Analytics & Visualization:</b> Data wrangling, exploratory analysis, scientific visualization using Python and OriginPro</li>
-  <li><b>Quantitative Modeling:</b> PDEs, transport equations, control systems, optimization</li>
-  <li><b>High-Performance Computing:</b> Parallelization using MPI; experience with cluster and HPC environments</li>
-  <li><b>Project Management & Collaboration:</b> Experienced in interdisciplinary teamwork and research coordination</li>
-</ul>
-<br>
+      <div class="item">
+        <div class="row">
+          <div>
+            <div class="role">Master of Science (Honors), Nanotechnology</div>
+            <div class="where">The American University in Cairo (AUC), Egypt</div>
+          </div>
+          <div class="when">Feb 2020 – Jul 2023</div>
+        </div>
+      </div>
 
+      <div class="item">
+        <div class="row">
+          <div>
+            <div class="role">Bachelor of Science, Chemistry and Physics</div>
+            <div class="where">University of Sohag, Egypt</div>
+          </div>
+          <div class="when">Sep 2012 – May 2016</div>
+        </div>
+      </div>
+    </section>
 
-  <h3 class="resume_accent">Education</h3>
-  <ul>
-    <li>PhD in Electrical and Computer Engineering, University of Toronto, Canada      (2024 - 2027)</li>
-    <li>M.Sc.in Nanotechnology, The American University in Cairo, Egypt      (2020 - 2023)</li>
-    <li>B.Sc. in Physics and Chemistry, Sohag University, Egypt      (2012 - 2016)</li>
-  </ul>
-  <br>
+    <section>
+      <h2>Work Experience</h2>
 
-  <h3 class="resume_accent">Research Experience</h3>
+      <div class="item">
+        <div class="row">
+          <div>
+            <div class="role">AI Application Engineer (Intern)</div>
+            <div class="where">Pulsenics, Canada</div>
+          </div>
+          <div class="when">Jun 2025 – Oct 2025</div>
+        </div>
+        <ul>
+          <li>Developed machine learning algorithms for real-time electrochemical diagnostics using in-operando EIS data.</li>
+          <li>Designed a predictive framework to analyze PEM fuel cell stack performance across 27 operating conditions.</li>
+          <li>Applied regression and time-series models to correlate impedance features with system degradation.</li>
+        </ul>
+      </div>
 
-  <h4>University of Toronto</h4>
-  <p><i>Graduate Teaching & Research Assistant</i>, Toronto, Canada, Jan 2024 – Present</p>
-  <ul>
-    <li>Modeling interfacial electrochemical reactions by PDEs in battery systems using multiscale approaches.</li>
-    <li>Teaching undergraduate courses including Electricity and Magnetism (ECE221H1) and Mathematical Physics (MAT291H1).</li>
-  </ul>
+      <div class="item">
+        <div class="row">
+          <div>
+            <div class="role">Graduate Teaching &amp; Research Assistant</div>
+            <div class="where">University of Toronto, Canada</div>
+          </div>
+          <div class="when">Jan 2024 – Present</div>
+        </div>
+        <ul>
+          <li>Teaching: ECE221H1, MAT291H1, and ECE191.</li>
+          <li>Atomistic modeling of interfacial electrochemical reactions in battery systems.</li>
+        </ul>
+      </div>
 
-  <h4>Pulsenics</h4>
-  <p><i>AI Application Engineer (Internship)</i>, Toronto, Canada, June 2025 – Oct 2025</p>
-  <ul>
-    <li>Developed a novel algorithm for Pulsenics' online electrochemical analysis platforms using machine learning.</li>
-    <li>Designed and implemented a framework to analyze PEM fuel cell stack performance across 27 operating conditions using in-operando EIS.</li>
-    <li>Extracted time-resolved impedance features to correlate operating parameters with performance-limiting mechanisms.</li>
-  </ul>
+      <div class="item">
+        <div class="row">
+          <div>
+            <div class="role">Visiting Research Scholar</div>
+            <div class="where">Johns Hopkins University, Baltimore, USA</div>
+          </div>
+          <div class="when">Jul 2023 – Dec 2023</div>
+        </div>
+        <ul>
+          <li>Machine learning design of High Entropy Alloys.</li>
+        </ul>
+      </div>
 
-  <h4>Johns Hopkins University</h4>
-  <p><i>Visiting Research Scholar</i>, Baltimore, USA, Jul 2023 – Dec 2023</p>
-  <ul>
-    <li>Conducted research on the design and characterization of High Entropy Alloys under postdoctoral supervision.</li>
-    <li>Collected and analyzed experimental data for advanced materials development.</li>
-  </ul>
+      <div class="item">
+        <div class="row">
+          <div>
+            <div class="role">Assistant Lecturer (Part-time)</div>
+            <div class="where">Universidade Nova de Lisboa (Cairo, Egypt)</div>
+          </div>
+          <div class="when">Sep 2022 – Dec 2022</div>
+        </div>
+        <ul>
+          <li>Delivered lectures and facilitated student learning for Foundational Chemistry.</li>
+        </ul>
+      </div>
 
-  <h4>The American University in Cairo</h4>
-  <p><i>Research Assistant</i>, Cairo, Egypt, Nov 2018 – Jul 2023</p>
-  <ul>
-    <li>Performed ab initio simulations on molecular surface interactions for catalysis and sensor applications.</li>
-    <li>Developed novel materials with tailored properties using computational modeling.</li>
-  </ul>
+      <div class="item">
+        <div class="row">
+          <div>
+            <div class="role">Research Assistant, EML Laboratory (Computational subgroup)</div>
+            <div class="where">The American University in Cairo, Egypt</div>
+          </div>
+          <div class="when">Nov 2018 – Jul 2023</div>
+        </div>
+        <ul>
+          <li>Computational modeling to develop novel materials with tailored properties.</li>
+          <li>Ab initio simulations of molecular–surface interactions for catalysis and sensor applications.</li>
+        </ul>
+      </div>
 
-  <h4>Universidade Nova de Lisboa</h4>
-  <p><i>Assistant Lecturer (Part-Time)</i>, Egypt, Sep 2022 – Dec 2022</p>
-  <ul>
-    <li>Delivered lectures for the Foundational Chemistry Course and supported student learning.</li>
-  </ul>
+      <div class="item">
+        <div class="row">
+          <div>
+            <div class="role">Teaching Assistant</div>
+            <div class="where">University of Prince Edward Island (Cairo, Egypt)</div>
+          </div>
+          <div class="when">Oct 2018 – Oct 2020</div>
+        </div>
+        <ul>
+          <li>Taught General Chemistry and Sustainable Design courses.</li>
+        </ul>
+      </div>
 
-  <h4>University of Prince Edward Island</h4>
-  <p><i>Teaching Assistant</i>, Egypt, Oct 2018 – Oct 2020</p>
-  <ul>
-    <li>Taught General Chemistry and Sustainable Design courses to undergraduate students.</li>
-  </ul>
-  <br>
+      <div class="item">
+        <div class="row">
+          <div>
+            <div class="role">Quality Control Specialist, Quality Department</div>
+            <div class="where">PFNonwovens, Cairo, Egypt</div>
+          </div>
+          <div class="when">Dec 2016 – Oct 2018</div>
+        </div>
+        <ul>
+          <li>Monitored product quality, testing parameters, work procedures, and performed audits across departments.</li>
+        </ul>
+      </div>
+    </section>
 
-<h3 class="resume_accent">Selected Publications</h3>
-<ul style="text-align: justify;">
-  <li><b>Abodouh, M. M.</b>, Khedr, G. E., & Allam, N. K. (2024). Optimizing diamond’s electronic band structure for HER and OER catalysis. <i>Int. J. Hydrogen Energy</i>, 61, 922–933. <a href="https://doi.org/10.1016/j.ijhydene.2024.03.008" target="_blank">Link</a></li>
-  <li><b>Abodouh, M. M.</b>, et al. (2024). Untapped potential of scrap brass alloy photocathodes for water splitting. <i>Energy Advances</i>, 3(2), 430–441. <a href="https://doi.org/10.1039/d3ya00534h" target="_blank">Link</a></li>
-  <li><b>Abodouh, M. M.</b>, et al. (2022). Graphitic carbon nitride nanoheterostructures for electrochemical sensing of MTX. <i>Biosensors</i>, 13(1), 51. <a href="https://doi.org/10.3390/bios13010051" target="_blank">Link</a></li>
-  <li><b>Abodouh, M. M.</b>, et al. (2021). Co–Cu Bimetallic MOF Catalyst for Oxygen Reduction. <i>JACS</i>, 143(10), 4064–4073. <a href="https://doi.org/10.1021/jacs.1c01096" target="_blank">Link</a></li>
-  <li><b>Abodouh, M. M.</b>, et al. (2021). Hybrid Composite Nanofibrous Filters. <i>Langmuir</i>, 37(24), 7492–7502. <a href="https://doi.org/10.1021/acs.langmuir.1c00926" target="_blank">Link</a></li>
-  <li><b>Abodouh, M. M.</b>, et al. (2024). Adsorption Mechanism of Methylene Blue on WO<sub>3</sub>. <i>Scientific Reports</i>, 14. <a href="https://doi.org/10.1038/s41598-024-78491-3" target="_blank">Link</a></li>
-  <li><b>Abodouh, M. M.</b>, et al. (2025). In-Operando EIS Monitoring of PEM Fuel Cell Stack. <i>ECE Conference</i>. <a href="https://ecs.confex.com/ecs/248/meetingapp.cgi/Paper/211008" target="_blank">Link</a></li>
-</ul>
-<br>
+    <section>
+      <h2>Training &amp; Workshops</h2>
+      <div class="item">
+        <ul>
+          <li>Participant, American Control Conference (ACC 2024) — Toronto, Canada (2024)</li>
+          <li>Poster Presenter, Materials Research Society (MRS) Fall Meeting — Boston, USA (2023)</li>
+          <li>Poster Presenter, Green Chemistry and Climate Change Summer School — Ca’ Foscari University of Venice, Italy (2021)</li>
+          <li>WHMIS 2015 Certification — University of Prince Edward Island, Canada (2018)</li>
+          <li>ISO Systems &amp; 6S Training — PFNonwovens, Egypt (2016)</li>
+          <li>Undergraduate Research Assistant — Egyptian Center for Theoretical Physics, Egypt (2015)</li>
+        </ul>
+      </div>
+    </section>
 
+    <section>
+      <h2>Skills</h2>
+      <div class="item">
+        <div class="grid">
+          <div class="label">Languages</div>
+          <div>English (Fluent), Arabic (Native), French (Intermediate)</div>
 
-<h3 class="resume_accent">Awards & Recognition</h3>
-<ul>
-  <li>Bert Wasmund Graduate Scholarship for Sustainable Energy Research (2024)</li>
-  <li>Edward S. Rogers Sr. Graduate Scholarship (2024)</li>
-  <li>The American University in Cairo Laboratory instructions Fellowship (2022-2023)</li>
-  <li>The American University in Cairo Fellowship (2020-2022)</li>
-  <li>The American University in Cairo Research support fund (2020)</li>
-</ul>
-<br>
+          <div class="label">Programming</div>
+          <div>Python, C (data analysis, numerical simulation, ML workflows, automation)</div>
 
-<h3 class="resume_accent">Languages</h3>
-<ul>
-    <li>Arabic – Native</li>
-    <li>English – Fluent</li>
-    <li>French – Beginner</li>
-</ul>
+          <div class="label">Data analytics</div>
+          <div>Data wrangling, EDA, feature engineering, visualization (NumPy, Pandas, Matplotlib), OriginPro</div>
 
+          <div class="label">Machine learning</div>
+          <div>Regression, classification, clustering, time-series analysis (scikit-learn)</div>
+
+          <div class="label">Modeling</div>
+          <div>DFT, molecular dynamics, molecular mechanics (Materials Studio, GULP, Quantum ESPRESSO, LAMMPS, VASP)</div>
+
+          <div class="label">Tools</div>
+          <div>OVITO, VESTA, Avogadro, XCrySDen, Microsoft Office</div>
+
+          <div class="label">Quantitative</div>
+          <div>PDEs, state-space models, transport equations, optimization</div>
+
+          <div class="label">HPC</div>
+          <div>MPI parallel computing; HPC clusters; high-throughput simulations</div>
+
+          <div class="label">Collaboration</div>
+          <div>Interdisciplinary coordination; cross-functional teamwork</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="pubs">
+      <h2>Publications</h2>
+      <div class="item">
+        <ol>
+          <li>
+            Abbas, W. A., et al. (2021). Cost-Effective Face Mask Filter Based on Hybrid Composite Nanofibrous Layers with High Filtration Efficiency. <em>Langmuir</em>, 37(24), 7492–7502.
+            DOI: <a href="https://doi.org/10.1021/acs.langmuir.1c00926">10.1021/acs.langmuir.1c00926</a>
+          </li>
+          <li>
+            Sanad, M. F., et al. (2021). Co–Cu Bimetallic MOF Catalyst Outperforms the Pt/C Benchmark for Oxygen Reduction. <em>J. Am. Chem. Soc.</em>, 143(10), 4064–4073.
+            DOI: <a href="https://doi.org/10.1021/jacs.1c01096">10.1021/jacs.1c01096</a>
+          </li>
+          <li>
+            Elfarargy, R. G., et al. (2022). Graphitic Carbon Nitride Nanoheterostructures for Electrochemical Sensing of MTX. <em>Biosensors</em>, 13(1), 51.
+            DOI: <a href="https://doi.org/10.3390/bios13010051">10.3390/bios13010051</a>
+          </li>
+          <li>
+            Leil, R., et al. (2024). Untapped potential of scrap brass alloy: brass-based photocathodes for durable PEC water splitting. <em>Energy Advances</em>, 3(2), 430–441.
+            DOI: <a href="https://doi.org/10.1039/d3ya00534h">10.1039/d3ya00534h</a>
+          </li>
+          <li>
+            Abodouh, M. M., Khedr, G. E., &amp; Allam, N. K. (2024). Optimizing diamond’s electronic band structure via defect engineering for enhanced HER and OER catalysis. <em>International Journal of Hydrogen Energy</em>, 61, 922–933.
+            DOI: <a href="https://doi.org/10.1016/j.ijhydene.2024.03.008">10.1016/j.ijhydene.2024.03.008</a>
+          </li>
+          <li>
+            Hkiri, K., et al. (2024). Adsorption mechanism of methylene blue on the (002) WO3 surface. <em>Scientific Reports</em>, 14.
+            DOI: <a href="https://doi.org/10.1038/s41598-024-78491-3">10.1038/s41598-024-78491-3</a>
+          </li>
+          <li>
+            Jezernik, M., Patterson, N., Rosas, J., et al. In-Operando EIS Monitoring of a PEM Fuel Cell Stack to Understand the Influence of Operating Conditions on Stack Performance. (ECS conference paper)
+            Link: <a href="https://ecs.confex.com/ecs/248/meetingapp.cgi/Paper/211008">ecs.confex.com/.../Paper/211008</a>
+          </li>
+        </ol>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
