@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256" role="img" aria-label="Virtual Color Mixing Lab icon">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#10b981"/>
+      <stop offset="1" stop-color="#059669"/>
+    </linearGradient>
+    <filter id="s" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#000000" flood-opacity="0.18"/>
+    </filter>
+  </defs>
+
+  <!-- Card -->
+  <rect x="18" y="18" width="220" height="220" rx="28" fill="url(#g)" filter="url(#s)"/>
+
+  <!-- Beaker outline -->
+  <path d="M92 64h72v18l-10 14v64c0 10-8 18-18 18h-16c-10 0-18-8-18-18V96L92 82V64z"
+        fill="none" stroke="#ffffff" stroke-width="10" stroke-linejoin="round"/>
+
+  <!-- Liquid -->
+  <path d="M104 154c12-10 36-10 48 0 8 6 18 6 28 0v10c0 10-8 18-18 18h-52c-10 0-18-8-18-18v-10c4 3 8 4 12 0z"
+        fill="#ffffff" opacity="0.22"/>
+
+  <!-- RGB drops -->
+  <circle cx="84" cy="112" r="10" fill="#ef4444"/>
+  <circle cx="128" cy="96" r="10" fill="#f59e0b"/>
+  <circle cx="172" cy="112" r="10" fill="#3b82f6"/>
+
+  <!-- Mix swirl -->
+  <path d="M112 140c10-10 22-12 34-6 10 5 18 3 26-6"
+        fill="none" stroke="#ffffff" stroke-width="8" stroke-linecap="round" opacity="0.95"/>
+  <path d="M110 162c14 10 30 12 48 6 10-3 18-2 26 4"
+        fill="none" stroke="#ffffff" stroke-width="8" stroke-linecap="round" opacity="0.85"/>
+</svg>
